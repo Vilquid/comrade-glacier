@@ -5,5 +5,5 @@ use logger::log;
 
 fn main()
 {
-    println!("Hi comrade glacier")
+    println!("Hi comrade glacier");
 }

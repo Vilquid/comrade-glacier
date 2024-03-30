@@ -97,10 +97,6 @@ jobs:
 
       - name: Run Clippy
         run: cd project && cargo clippy -- -D warnings
-#      - uses: actions-rs/cargo@v1
-#        with:
-#          command: clippy
-#          args: -- -D warnings
 
   build:
     name: Build
@@ -139,14 +135,10 @@ jobs:
           override: true
 
       - name: Install cargo-audit
-        uses: actions-rs/install@v0.1
-        with:
-          crate: cargo-audit
-          version: latest
+        run: cargo install cargo-audit --features=fix
 
       - name: Run cargo-audit
-#        uses: actions-rs/audit-check@v1
-        run: cd project && cargo cargo-audit
+        run: cd project && cargo audit fix
 
   dead-links:
     name: Dead links
@@ -163,15 +155,7 @@ jobs:
           override: true
 
       - name: Build documentation and check for dead links
-        run: cd project && cargo doc --check-http
-#        uses: actions-rs/cargo@v1
-#        with:
-#          command: doc
-#
-#      - name: Check for dead links
-#        uses: actions-rs/cargo-deadlinks@v1
-#        with:
-#          args: --check-http
+        run: cd project && cargo doc --verbose
 
   benchmark:
     name: Performance benchmark
@@ -189,5 +173,4 @@ jobs:
           override: true
 
       - name: Benchmark
-        run: cargo bench
-
+        run: cd project && cargo bench --verbose

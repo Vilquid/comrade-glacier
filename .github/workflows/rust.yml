@@ -12,8 +12,8 @@ on:
     paths:
       - '**.rs'
 
-env:
-  CARGO_TERM_COLOR: always
+#env:
+#  CARGO_TERM_COLOR: always
 
 jobs:
   check:
@@ -34,6 +34,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
+        working-directory: ../../project
 
   format:
     name: Format

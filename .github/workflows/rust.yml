@@ -49,7 +49,7 @@ jobs:
           override: true
 
       - name: Check formatting
-        run: cd project && cargo fmt # --all -- --check
+        run: cd project && cargo fmt
 
   tests:
     name: Tests
@@ -71,7 +71,6 @@ jobs:
 
   clippy:
     name: Lint with Clippy
-    needs: [check, format, tests]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources

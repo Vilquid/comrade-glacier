@@ -2,6 +2,7 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenv::dotenv;
 use std::env;
+use crate::domain::dns;
 use crate::models::{Domain, NewDomain, NewPort, Port};
 use crate::schema::{domains, ports};
 
@@ -30,10 +31,11 @@ pub fn add_port(conn: &mut PgConnection, data: Port) -> Port
 		.expect("Error saving new port")
 }
 
-pub fn add_domain(conn: &mut PgConnection, data: Domain) -> Domain
+pub fn add_domain(domain: &str) -> Domain
 {
-	// let spf_json = serde_json::to_value(data.spf).expect("Error converting spf to json");
-
+	let mut connection = establish_connection();
+	let data = dns(domain);
+	
 	let domain = NewDomain
 	{
 		domain: data.domain,
@@ -49,6 +51,6 @@ pub fn add_domain(conn: &mut PgConnection, data: Domain) -> Domain
 	diesel::insert_into(domains::table)
 		.values(&domain)
 		.returning(Domain::as_returning())
-		.get_result(conn)
+		.get_result(&mut connection)
 		.expect("Error saving new port")
 }

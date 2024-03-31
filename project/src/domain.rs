@@ -75,11 +75,8 @@ fn bimi(domain: String) -> Value
 			}
 		}
 	}
-	
-	// return bimi_record;
-	let bimi_record_json = serde_json::to_value(bimi_record).expect("Error converting bimi record to json");
-	
-	bimi_record_json
+
+	serde_json::to_value(bimi_record).expect("Error converting bimi record to json")
 }
 
 fn certificate(_domain: String) -> Value
@@ -190,9 +187,7 @@ fn certificate(_domain: String) -> Value
 		extensions_intermediate_subject_alternative_names,
 	};
 
-	let certificate_record_json = serde_json::to_value(certificate_record).expect("Error converting certificate record to json");
-	
-	certificate_record_json
+	serde_json::to_value(certificate_record).expect("Error converting certificate record to json")
 }
 
 pub fn dane(domain: String) -> Value
@@ -260,9 +255,7 @@ pub fn dane(domain: String) -> Value
 		// dane_record.certificate_shape = dane_record.certificate_shape.trim_matches('\n').trim().to_string();
 	}
 
-	let dane_record_json = serde_json::to_value(dane_record).expect("Error converting dane record to json");
-	
-	dane_record_json
+	serde_json::to_value(dane_record).expect("Error converting dane record to json")
 }
 
 /// # Brief
@@ -356,9 +349,7 @@ fn dmarc(domain: String) -> Value
 	dmarc_record.ruf = dmarc_record.ruf.trim_matches(';').trim().to_string();
 	dmarc_record.fo = dmarc_record.fo.trim_matches('\"').trim().to_string();
 
-	let dmarc_record_json = serde_json::to_value(dmarc_record).expect("Error converting dmarc record to json");
-	
-	dmarc_record_json
+	serde_json::to_value(dmarc_record).expect("Error converting dmarc record to json")
 }
 
 
@@ -404,7 +395,7 @@ pub(crate) fn mta(domain: String) -> Value
 		if session_info.len() == 1
 		{
 			let output = session_string.trim_matches('\"').trim();
-			
+
 			// let parts: Vec<&str> = output.clone().split(";").collect();
 			let parts: Vec<&str> = output.split(';').collect();
 
@@ -443,9 +434,7 @@ pub(crate) fn mta(domain: String) -> Value
 	
 	mta_record.used = true;
 
-	let mta_record_json = serde_json::to_value(mta_record).expect("Error converting mta record to json");
-	
-	mta_record_json
+	serde_json::to_value(mta_record).expect("Error converting mta record to json")
 }
 
 /// # Brief
@@ -528,9 +517,7 @@ fn spf(domain: String) -> Value
 	
 	spf_record.used = true;
 
-	let spf_record_json = serde_json::to_value(spf_record).expect("Error converting spf record to json");
-	
-	spf_record_json
+	serde_json::to_value(spf_record).expect("Error converting spf record to json")
 }
 
 /// # Brief
@@ -600,9 +587,7 @@ fn tls_rtp(domain: String) -> Value
 	
 	tls_record.used = true;
 
-	let tls_record_json = serde_json::to_value(tls_record).expect("Error converting tls record to json");
-	
-	tls_record_json
+	serde_json::to_value(tls_record).expect("Error converting tls record to json")
 }
 
 /// # Brief
@@ -617,8 +602,6 @@ pub(crate) fn dns(domain: &str) -> Domain
 {
 	let domain_struct = String::from(domain);
 	let domain_function = domain_struct.clone();
-	
-	
 	
 	Domain
 	{

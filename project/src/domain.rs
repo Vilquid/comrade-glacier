@@ -488,9 +488,9 @@ fn spf(domain: String) -> Value
 		{
 			// Supprime les guillemets et les espaces en début et fin de chaîne
 			let mut output = line.trim_matches('\"').trim();
-			let output2 = &*output.replace(":", "=");
+			let output2 = &*output.replace(':', "=");
 
-			let parts: Vec<&str> = output2.clone().split(" ").collect();
+			let parts: Vec<&str> = output2.clone().split(' ').collect();
 
 			for part in parts
 			{

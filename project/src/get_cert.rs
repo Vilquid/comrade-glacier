@@ -6,7 +6,7 @@ use std::cmp::min;
 use std::convert::TryFrom;
 use std::fs::File;
 use std::io;
-use std::io::{BufRead, Read, Write};
+use std::io::{Read, Write};
 use std::net::{Ipv4Addr, Ipv6Addr};
 use x509_parser::prelude::*;
 use x509_parser::public_key::PublicKey;
@@ -14,12 +14,11 @@ use x509_parser::signature_algorithm::SignatureAlgorithm;
 use std::process::{Command, Stdio};
 use regex::Regex;
 use chrono::{Utc, TimeZone, DateTime};
-use serde::{Serialize, Deserialize};
 
 
 const PARSE_ERRORS_FATAL: bool = false;
-#[cfg(feature = "validate")]
-const VALIDATE_ERRORS_FATAL: bool = false;
+// #[cfg(feature = "validate")]
+// const VALIDATE_ERRORS_FATAL: bool = false;
 
 
 #[derive(Debug, PartialEq)]
@@ -686,29 +685,26 @@ fn handle_certificate(file_name: &str, data: &[u8]) -> io::Result<(Option<Server
 			let signature_value = x509.signature_value.data;
 			let signature_value_str = format!("{:?}", signature_value);
 
-			//let extensions =  x50.extensions();
-			//let extensions_str = format!("{:?}", extensions);
-
-
-			if file_name.contains("server") {
+			if file_name.contains("server")
+			{
 				// It's the server certificate
 				server_cert = Some(ServerCert {
-					subject_country: subject_country,
-					subject_state: subject_state,
-					subject_locality: subject_locality,
-					subject_organization: subject_organization,
-					subject_common_name: subject_common_name,
-					issuer_country: issuer_country,
-					issuer_state: issuer_state,
-					issuer_locality: issuer_locality,
-					issuer_organization: issuer_organization,
-					issuer_common_name: issuer_common_name,
+					subject_country,
+					subject_state,
+					subject_locality,
+					subject_organization,
+					subject_common_name,
+					issuer_country,
+					issuer_state,
+					issuer_locality,
+					issuer_organization,
+					issuer_common_name,
 					not_before: not_before.parse().unwrap(),
 					not_after: not_after.parse().unwrap(),
-					is_valid: is_valid,
-					pki_algorithm_oid: pki_algorithm_oid,
-					pki_algorithm_bytes: pki_algorithm_bytes,
-					pki_algorithm_exponent: pki_algorithm_exponent,
+					is_valid,
+					pki_algorithm_oid,
+					pki_algorithm_bytes,
+					pki_algorithm_exponent,
 					signature_algorithm: signature_algorithm_str,
 					signature_value: signature_value_str,
 					extensions_authority_key_identifier: authority_key_identifier_str,
@@ -725,22 +721,22 @@ fn handle_certificate(file_name: &str, data: &[u8]) -> io::Result<(Option<Server
 			} else {
 				// It's an intermediate certificate
 				intermediate_cert = Some(IntermediateCert {
-					subject_country: subject_country,
-					subject_state: subject_state,
-					subject_locality: subject_locality,
-					subject_organization: subject_organization,
-					subject_common_name: subject_common_name,
-					issuer_country: issuer_country,
-					issuer_state: issuer_state,
-					issuer_locality: issuer_locality,
-					issuer_organization: issuer_organization,
-					issuer_common_name: issuer_common_name,
+					subject_country,
+					subject_state,
+					subject_locality,
+					subject_organization,
+					subject_common_name,
+					issuer_country,
+					issuer_state,
+					issuer_locality,
+					issuer_organization,
+					issuer_common_name,
 					not_before: not_before.parse().unwrap(),
 					not_after: not_after.parse().unwrap(),
-					is_valid: is_valid,
-					pki_algorithm_oid: pki_algorithm_oid,
-					pki_algorithm_bytes: pki_algorithm_bytes,
-					pki_algorithm_exponent: pki_algorithm_exponent,
+					is_valid,
+					pki_algorithm_oid,
+					pki_algorithm_bytes,
+					pki_algorithm_exponent,
 					signature_algorithm: signature_algorithm_str,
 					signature_value: signature_value_str,
 					extensions_authority_key_identifier: authority_key_identifier_str,
@@ -795,7 +791,8 @@ fn download_certificates(domain: &str) -> Result<(), Box<dyn std::error::Error>>
 	let server_cert_pem = format!("{}_server.pem", domain);
 	let mut server_cert_file = File::create(&server_cert_pem)?;
 
-	if let Some(server_cert) = certs.get(0) {
+	if let Some(server_cert) = certs.get(0)
+	{
 		server_cert_file.write_all(server_cert.as_bytes())?;
 	} else {
 		return Err("Failed to retrieve server certificate".into());

@@ -16,7 +16,7 @@ use regex::Regex;
 use chrono::{Utc, TimeZone, DateTime};
 
 
-const PARSE_ERRORS_FATAL: bool = false;
+// const PARSE_ERRORS_FATAL: bool = false;
 // #[cfg(feature = "validate")]
 // const VALIDATE_ERRORS_FATAL: bool = false;
 
@@ -91,7 +91,7 @@ pub struct Cert {
 	pub intermediate: IntermediateCert,
 }
 
-
+#[allow(unused)]
 fn print_hex_dump(bytes: &[u8], max_len: usize) {
 	let m = min(bytes.len(), max_len);
 	print!("{}", &bytes[..m].to_hex(16));
@@ -100,12 +100,16 @@ fn print_hex_dump(bytes: &[u8], max_len: usize) {
 	}
 }
 
+#[allow(unused)]
+
 fn format_oid(oid: &Oid) -> String {
 	match oid2sn(oid, oid_registry()) {
 		Ok(s) => s.to_owned(),
 		_ => format!("{}", oid),
 	}
 }
+
+#[allow(unused)]
 
 fn generalname_to_string(gn: &GeneralName) -> String {
 	match gn {
@@ -229,6 +233,8 @@ fn print_x509_digest_algorithm(alg: &AlgorithmIdentifier, level: usize) {
 		println!("{:indent$}Parameter: <ABSENT>", "", indent = level);
 	}
 }
+
+#[allow(unused)]
 
 fn print_x509_info(x509: &X509Certificate) -> io::Result<()> {
 	let version = x509.version();
@@ -806,10 +812,11 @@ fn download_certificates(domain: &str) -> Result<(), Box<dyn std::error::Error>>
 	Ok(())
 }
 
-
+#[allow(unused)]
 pub struct PrintX509Cert();
 
 impl  PrintX509Cert {
+	#[allow(unused)]
 	pub fn from_domain(domain: &str) -> Result<Cert, io::Error> {
 		if let Err(err) = download_certificates(domain) {
 			eprintln!("Error: {}", err);

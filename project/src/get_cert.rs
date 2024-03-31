@@ -519,10 +519,11 @@ fn handle_certificate(file_name: &str, data: &[u8]) -> io::Result<(Option<Server
 				}
 			}
 
-			let not_before = Utc.timestamp(x509.validity().not_before.timestamp(), 0).to_string();
-			let not_after = Utc.timestamp(x509.validity().not_after.timestamp(), 0).to_string();
+			// let not_before = Utc.timestamp(x509.validity().not_before.timestamp(), 0).to_string();
+			let not_before = Utc.timestamp_opt(x509.validity().not_before.timestamp(), 0).unwrap().to_string();
+			// let not_after = Utc.timestamp(x509.validity().not_after.timestamp(), 0).to_string();
+			let not_after = Utc.timestamp_opt(x509.validity().not_after.timestamp(), 0).unwrap().to_string();
 			let is_valid = x509.validity().is_valid();
-
 
 			let pki_parsed = x509.public_key().parsed();
 			let pki_parsed_str = format!("{:?}", pki_parsed);
@@ -530,7 +531,7 @@ fn handle_certificate(file_name: &str, data: &[u8]) -> io::Result<(Option<Server
 			let mut pki_algorithm_oid: String = "".to_string();
 
 			if let Some(start_index) = pki_parsed_str.find("Ok(") {
-				if let Some(end_index) = pki_parsed_str[start_index..].find("{") {
+				if let Some(end_index) = pki_parsed_str[start_index..].find('{') {
 					let extracted_str = &pki_parsed_str[start_index + 3..start_index + end_index];
 					pki_algorithm_oid = extracted_str.parse().unwrap();
 				}
@@ -539,7 +540,7 @@ fn handle_certificate(file_name: &str, data: &[u8]) -> io::Result<(Option<Server
 			let mut pki_algorithm_bytes: String = "".to_string();
 
 			if let Some(start_index) = pki_parsed_str.find("modulus") {
-				if let Some(end_index) = pki_parsed_str[start_index..].find("]") {
+				if let Some(end_index) = pki_parsed_str[start_index..].find(']') {
 					let extracted_str = &pki_parsed_str[start_index + 10..start_index + end_index];
 					pki_algorithm_bytes = extracted_str.parse().unwrap();
 				}
@@ -548,7 +549,7 @@ fn handle_certificate(file_name: &str, data: &[u8]) -> io::Result<(Option<Server
 			let mut pki_algorithm_exponent: String = "".to_string();
 
 			if let Some(start_index) = pki_parsed_str.find("exponent: [") {
-				if let Some(end_index) = pki_parsed_str[start_index..].find("]") {
+				if let Some(end_index) = pki_parsed_str[start_index..].find(']') {
 					let extracted_str = &pki_parsed_str[start_index + 11..start_index + end_index];
 					pki_algorithm_exponent = extracted_str.parse().unwrap();
 				}
@@ -675,7 +676,7 @@ fn handle_certificate(file_name: &str, data: &[u8]) -> io::Result<(Option<Server
 						let ski_value = id;
 						ski_value_str = format!("{:?}", ski_value);
 					}
-					x => println!(),
+					_x => println!(),
 				}
 			}
 
@@ -755,12 +756,7 @@ fn handle_certificate(file_name: &str, data: &[u8]) -> io::Result<(Option<Server
 		}
 		Err(e) => {
 			let s = format!("Error while parsing {}: {}", file_name, e);
-			if PARSE_ERRORS_FATAL {
-				Err(io::Error::new(io::ErrorKind::Other, s))
-			} else {
-				eprintln!("{}", s);
-				Ok((server_cert, intermediate_cert))
-			}
+			Err(io::Error::new(io::ErrorKind::Other, s))
 		}
 	}
 }
@@ -789,9 +785,11 @@ fn download_certificates(domain: &str) -> Result<(), Box<dyn std::error::Error>>
 	let certs: Vec<&str> = re.find_iter(&output).map(|m| m.as_str()).collect();
 
 	let server_cert_pem = format!("{}_server.pem", domain);
-	let mut server_cert_file = File::create(&server_cert_pem)?;
+	let mut server_cert_file = File::create(server_cert_pem)?;
+	// let mut server_cert_file = File::create(&server_cert_pem)?;
+	// if let Some(server_cert) = certs.get(0)
 
-	if let Some(server_cert) = certs.get(0)
+	if let Some(server_cert) = certs.first()
 	{
 		server_cert_file.write_all(server_cert.as_bytes())?;
 	} else {

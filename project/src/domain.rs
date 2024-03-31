@@ -45,13 +45,14 @@ fn bimi(domain: String) -> Value
 	{
 		if line.contains("v=BIMI")
 		{
-			let mut output = line.trim_matches('\"').trim();
+			let output = line.trim_matches('\"').trim();
+			// let parts: Vec<&str> = output.clone().split(" ").collect();
 
-			let parts: Vec<&str> = output.clone().split(" ").collect();
+			let parts: Vec<&str> = output.split(' ').collect();
 
 			for part in parts
 			{
-				let key_value: Vec<&str> = part.split(":").collect();
+				let key_value: Vec<&str> = part.split(':').collect();
 
 				if key_value.len() != 2
 				{
@@ -77,12 +78,13 @@ fn bimi(domain: String) -> Value
 	
 	// return bimi_record;
 	let bimi_record_json = serde_json::to_value(bimi_record).expect("Error converting bimi record to json");
-	return bimi_record_json;
+	
+	bimi_record_json
 }
 
-fn certificate(domain: String) -> Value
+fn certificate(_domain: String) -> Value
 {
-	let mut issuer_server = IssuerDetails
+	let issuer_server = IssuerDetails
 	{
 		city: "".to_string(),
 		state: "".to_string(),
@@ -91,15 +93,15 @@ fn certificate(domain: String) -> Value
 		common_name: "".to_string(),
 	};
 
-	let mut signature_server = "".to_string();
+	let signature_server = "".to_string();
 
-	let mut validity_server = ValidityDetails {
+	let validity_server = ValidityDetails {
 		not_before: "".to_string(),
 		not_after: "".to_string(),
 		is_valid: false,
 	};
 
-	let mut subject_server = SubjectDetails {
+	let subject_server = SubjectDetails {
 		city: "".to_string(),
 		state: "".to_string(),
 		locality: "".to_string(),
@@ -107,9 +109,9 @@ fn certificate(domain: String) -> Value
 		common_name: "".to_string(),
 	};
 
-	let mut extensions_server_subject_alternative_names = vec![String::new()];
+	let extensions_server_subject_alternative_names = vec![String::new()];
 
-	let mut issuer_intermediate = IssuerDetails {
+	let issuer_intermediate = IssuerDetails {
 		city: "".to_string(),
 		state: "".to_string(),
 		locality: "".to_string(),
@@ -117,15 +119,15 @@ fn certificate(domain: String) -> Value
 		common_name: "".to_string(),
 	};
 
-	let mut signature_intermediate = "".to_string();
+	let signature_intermediate = "".to_string();
 
-	let mut validity_intermediate = ValidityDetails {
+	let validity_intermediate = ValidityDetails {
 		not_before: "".to_string(),
 		not_after: "".to_string(),
 		is_valid: false,
 	};
 
-	let mut subject_intermediate = SubjectDetails {
+	let subject_intermediate = SubjectDetails {
 		city: "".to_string(),
 		state: "".to_string(),
 		locality: "".to_string(),
@@ -133,7 +135,7 @@ fn certificate(domain: String) -> Value
 		common_name: "".to_string(),
 	};
 
-	let mut extensions_intermediate_subject_alternative_names = vec![String::new()];
+	let extensions_intermediate_subject_alternative_names = vec![String::new()];
 	
 	let certificate_record = Certificate
 	{
@@ -189,7 +191,8 @@ fn certificate(domain: String) -> Value
 	};
 
 	let certificate_record_json = serde_json::to_value(certificate_record).expect("Error converting certificate record to json");
-	return certificate_record_json;
+	
+	certificate_record_json
 }
 
 pub fn dane(domain: String) -> Value
@@ -258,7 +261,8 @@ pub fn dane(domain: String) -> Value
 	}
 
 	let dane_record_json = serde_json::to_value(dane_record).expect("Error converting dane record to json");
-	return dane_record_json;
+	
+	dane_record_json
 }
 
 /// # Brief
@@ -318,7 +322,7 @@ fn dmarc(domain: String) -> Value
 
 	for part in parts
 	{
-		let key_value: Vec<&str> = part.split("=").collect();
+		let key_value: Vec<&str> = part.split('=').collect();
 
 		if key_value.len() != 2
 		{
@@ -353,7 +357,8 @@ fn dmarc(domain: String) -> Value
 	dmarc_record.fo = dmarc_record.fo.trim_matches('\"').trim().to_string();
 
 	let dmarc_record_json = serde_json::to_value(dmarc_record).expect("Error converting dmarc record to json");
-	return dmarc_record_json;
+	
+	dmarc_record_json
 }
 
 
@@ -393,18 +398,19 @@ pub(crate) fn mta(domain: String) -> Value
 	if session_string.contains("v=STS")
 	{
 		let session_string = session_string.trim_matches('\"').trim();
-		let session_info: Vec<&str> = session_string.split(" ").collect();
-		mta_record.version = String::from(session_info[0].split("=").collect::<Vec<&str>>()[1]);
+		let session_info: Vec<&str> = session_string.split(' ').collect();
+		mta_record.version = String::from(session_info[0].split('=').collect::<Vec<&str>>()[1]);
 
 		if session_info.len() == 1
 		{
 			let output = session_string.trim_matches('\"').trim();
-
-			let parts: Vec<&str> = output.clone().split(";").collect();
+			
+			// let parts: Vec<&str> = output.clone().split(";").collect();
+			let parts: Vec<&str> = output.split(';').collect();
 
 			for part in parts
 			{
-				let key_value: Vec<&str> = part.split("=").collect();
+				let key_value: Vec<&str> = part.split('=').collect();
 
 				if key_value.len() != 2
 				{
@@ -425,7 +431,7 @@ pub(crate) fn mta(domain: String) -> Value
 
 		if session_info.len() >= 2
 		{
-			mta_record.sn = String::from(session_info[1].split("=").collect::<Vec<&str>>()[1].trim_matches('\"').trim_matches(';'));
+			mta_record.sn = String::from(session_info[1].split('=').collect::<Vec<&str>>()[1].trim_matches('\"').trim_matches(';'));
 		}
 	}
 
@@ -438,7 +444,8 @@ pub(crate) fn mta(domain: String) -> Value
 	mta_record.used = true;
 
 	let mta_record_json = serde_json::to_value(mta_record).expect("Error converting mta record to json");
-	return mta_record_json;
+	
+	mta_record_json
 }
 
 /// # Brief
@@ -460,7 +467,7 @@ fn spf(domain: String) -> Value
 	// Transforme la sortie en chaîne de caractères
 	let output_str = String::from_utf8(output.stdout).expect("invalid utf8");
 	// Sépare la chaîne de caractères en lignes
-	let lines: Vec<&str> = output_str.split("\n").collect();
+	let lines: Vec<&str> = output_str.split('\n').collect();
 
 	// Initialise la structure qui stockera les informations du record SPF
 	let mut spf_record = SPF
@@ -487,14 +494,14 @@ fn spf(domain: String) -> Value
 		if line.contains("v=spf")
 		{
 			// Supprime les guillemets et les espaces en début et fin de chaîne
-			let mut output = line.trim_matches('\"').trim();
+			let output = line.trim_matches('\"').trim();
 			let output2 = &*output.replace(':', "=");
 
-			let parts: Vec<&str> = output2.clone().split(' ').collect();
+			let parts: Vec<&str> = output2.split(' ').collect();
 
 			for part in parts
 			{
-				let key_value: Vec<&str> = part.split("=").collect();
+				let key_value: Vec<&str> = part.split('=').collect();
 
 				if key_value.len() != 2
 				{
@@ -522,7 +529,8 @@ fn spf(domain: String) -> Value
 	spf_record.used = true;
 
 	let spf_record_json = serde_json::to_value(spf_record).expect("Error converting spf record to json");
-	return spf_record_json;
+	
+	spf_record_json
 }
 
 /// # Brief
@@ -564,13 +572,13 @@ fn tls_rtp(domain: String) -> Value
 			let session_string = line.trim_matches('\"').trim();
 			// let session_info: Vec<&str> = session_string.split(" ").collect();
 
-			let session_string = session_string.replace(" ", "");
+			let session_string = session_string.replace(' ', "");
 
-			let parts: Vec<&str> = session_string.split(";").collect();
+			let parts: Vec<&str> = session_string.split(';').collect();
 
 			for part in parts
 			{
-				let key_value: Vec<&str> = part.split("=").collect();
+				let key_value: Vec<&str> = part.split('=').collect();
 
 				if key_value.len() != 2
 				{
@@ -593,7 +601,8 @@ fn tls_rtp(domain: String) -> Value
 	tls_record.used = true;
 
 	let tls_record_json = serde_json::to_value(tls_record).expect("Error converting tls record to json");
-	return tls_record_json;
+	
+	tls_record_json
 }
 
 /// # Brief
@@ -609,7 +618,9 @@ pub(crate) fn dns(domain: &str) -> Domain
 	let domain_struct = String::from(domain);
 	let domain_function = domain_struct.clone();
 	
-	let domain_record = Domain
+	
+	
+	Domain
 	{
 		id: 0,
 		domain: domain_struct.clone(),
@@ -620,8 +631,6 @@ pub(crate) fn dns(domain: &str) -> Domain
 		mta: mta(domain_function.clone()),
 		tls_rpt: tls_rtp(domain_function.clone()),
 		spf: spf(domain_function.clone()),
-	};
-	
-	domain_record
+	}
 }
 

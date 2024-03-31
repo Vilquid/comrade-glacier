@@ -7,8 +7,8 @@ use std::io::Write;
 /// # Attributes
 /// inline
 /// # Parameters
-/// **level** *&str* - Level of the log. It should be INFO or ERROR
-/// **message** *&str* - Message of the log. It should be short, simple and explicit 
+/// - `level` *&str* - Level of the log. It should be INFO or ERROR.
+/// - `message` *&str* - Message of the log. It should be short, simple and explicit.
 /// # Return
 /// **Nothing**
 /// # Usage

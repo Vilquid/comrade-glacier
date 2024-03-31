@@ -1,6 +1,8 @@
-use std::net::Ipv4Addr;
+pub use std::net::Ipv4Addr;
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
+use crate::schema::ports;
+
 
 
 /// # Brief
@@ -37,7 +39,7 @@ pub struct Port
 /// - ``mta` *MTA* - The mta record of `domain`
 /// - ``tls_rpt` *TLS* - The tls record of `domain`
 /// - ``spf` *SPF* - The spf record of `domain`
-#[derive(Queryable, Selectable, Serialize, Deserialize)]
+#[derive(Queryable, Selectable)]
 #[diesel(table_name = crate::schema::domains)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Domain
@@ -51,6 +53,15 @@ pub struct Domain
 	pub mta: MTASTS,
 	pub tls_rpt: TLSRTP,
 	pub spf: SPF,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = ports)]
+pub struct NewPort
+{
+	pub ip: Ipv4Addr,
+	pub port_25_open: bool,
+	pub domain: String,
 }
 
 /// # Brief

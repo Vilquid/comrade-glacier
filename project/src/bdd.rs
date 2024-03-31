@@ -2,7 +2,8 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenv::dotenv;
 use std::env;
-// use crate::model::Port;
+use crate::model::Port;
+use crate::schema::ports;
 
 pub fn establish_connection() -> PgConnection
 {
@@ -15,14 +16,18 @@ pub fn establish_connection() -> PgConnection
 
 pub fn add_port(conn: &mut PgConnection, data: Port) -> Port
 {
-	// use crate::schema::posts;
+	let port = Port
+	{
+		id: 0,
+		ip: data.ip,
+		port_25_open: data.port_25_open,
+		domain: data.domain,
+	}:
 
-	// let new_post = NewPost { title, body };
-
-	// diesel::insert_into(posts::table)
-	// 	.values(&new_post)
-	// 	.returning(Post::as_returning())
-	// 	.get_result(conn)
-	// 	.expect("Error saving new post")
+	diesel::insert_into(ports::table)
+		.values(&port)
+		.returning(Port::as_returning())
+		.get_result(conn)
+		.expect("Error saving new post")
 }
 

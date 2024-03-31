@@ -1,7 +1,7 @@
 pub mod logger;
 pub mod schema;
 pub mod bdd;
-pub mod model;
+pub mod models;
 mod domain;
 mod get_cert;
 

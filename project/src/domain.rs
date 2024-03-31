@@ -1,6 +1,7 @@
 use std::process::Command;
 use std::str::from_utf8;
-use crate::model::{BIMI, Certificate, DANE, DMARC, Domain, IssuerDetails, MTASTS, SPF, SubjectDetails, TLSRTP, ValidityDetails};
+use serde_json::Value;
+use crate::models::{BIMI, Certificate, DANE, DMARC, Domain, IssuerDetails, MTASTS, SPF, SubjectDetails, TLSRTP, ValidityDetails};
 
 
 /// # Brief
@@ -9,7 +10,7 @@ use crate::model::{BIMI, Certificate, DANE, DMARC, Domain, IssuerDetails, MTASTS
 /// `domain` *String* - The domain name
 /// # Return
 /// `bimi_record` *BIMI* - The structured bimi record of the domain
-fn bimi(domain: String) -> BIMI
+fn bimi(domain: String) -> Value
 {
 	// Get the bimi record of the domain
 	let output = Command::new("dig")
@@ -36,7 +37,8 @@ fn bimi(domain: String) -> BIMI
 
 	if output_str.is_empty()
 	{
-		return bimi_record;
+		let bimi_record_json = serde_json::to_value(bimi_record).expect("Error converting bimi record to json");
+		return bimi_record_json;
 	}
 
 	for line in output_str.lines()
@@ -73,10 +75,12 @@ fn bimi(domain: String) -> BIMI
 		}
 	}
 	
-	return bimi_record;
+	// return bimi_record;
+	let bimi_record_json = serde_json::to_value(bimi_record).expect("Error converting bimi record to json");
+	return bimi_record_json;
 }
 
-fn certificate(domain: String) -> Certificate
+fn certificate(domain: String) -> Value
 {
 	let mut issuer_server = IssuerDetails
 	{
@@ -131,7 +135,7 @@ fn certificate(domain: String) -> Certificate
 
 	let mut extensions_intermediate_subject_alternative_names = vec![String::new()];
 	
-	Certificate
+	let certificate_record = Certificate
 	{
 		used: false,
 		issuer_server: IssuerDetails
@@ -182,10 +186,13 @@ fn certificate(domain: String) -> Certificate
 			common_name: subject_intermediate.common_name.to_string(),
 		},
 		extensions_intermediate_subject_alternative_names,
-	}
+	};
+
+	let certificate_record_json = serde_json::to_value(certificate_record).expect("Error converting certificate record to json");
+	return certificate_record_json;
 }
 
-pub fn dane(domain: String) -> DANE
+pub fn dane(domain: String) -> Value
 {
 	// Get the dane record for the domain 
 	let output = Command::new("dig")
@@ -212,7 +219,8 @@ pub fn dane(domain: String) -> DANE
 	// Si la sortie de dig est vide, on retourne un DANERecord vide
 	if output_str.is_empty()
 	{
-		return dane_record;
+		let dane_record_json = serde_json::to_value(dane_record).expect("Error converting dane record to json");
+		return dane_record_json;
 	}
 	
 	println!("{}", output_str);
@@ -245,11 +253,12 @@ pub fn dane(domain: String) -> DANE
 			dane_record.hash = words[3].to_string().to_owned();
 		}
 
-		dane_record.certificate_shape = dane_record.certificate_shape.trim_matches(';').trim().to_string();
-		dane_record.certificate_shape = dane_record.certificate_shape.trim_matches('\n').trim().to_string();
+		// dane_record.certificate_shape = dane_record.certificate_shape.trim_matches(';').trim().to_string();
+		// dane_record.certificate_shape = dane_record.certificate_shape.trim_matches('\n').trim().to_string();
 	}
 
-	dane_record
+	let dane_record_json = serde_json::to_value(dane_record).expect("Error converting dane record to json");
+	return dane_record_json;
 }
 
 /// # Brief
@@ -258,7 +267,7 @@ pub fn dane(domain: String) -> DANE
 /// `domain` *String* - The domain name
 /// # Return
 /// `dmarc_record` *DMARC* - The structured dmarc record of the domain
-fn dmarc(domain: String) -> DMARC
+fn dmarc(domain: String) -> Value
 {
 	// Get the dmarc record of the domain
 	let output = Command::new("dig")
@@ -298,7 +307,8 @@ fn dmarc(domain: String) -> DMARC
 
 	if dmarc_starting.is_empty()
 	{
-		return dmarc_record;
+		let dmarc_record_json = serde_json::to_value(dmarc_record).expect("Error converting dmarc record to json");
+		return dmarc_record_json;
 	}
 
 	let s = dmarc_starting;
@@ -327,7 +337,7 @@ fn dmarc(domain: String) -> DMARC
 			"ruf" => dmarc_record.ruf = value.to_string(),
 			"ri" => dmarc_record.ri = value.to_string(),
 			"rf" => dmarc_record.rf = value.to_string(),
-			"pct" => dmarc_record.pct = value.to_string(),
+			"pct" => dmarc_record.pct = value.parse().unwrap(),
 			"aspf" => dmarc_record.aspf = value.to_string(),
 			"adkim" => dmarc_record.adkim = value.to_string(),
 			"fo" => dmarc_record.fo = value.to_string(),
@@ -342,7 +352,8 @@ fn dmarc(domain: String) -> DMARC
 	dmarc_record.ruf = dmarc_record.ruf.trim_matches(';').trim().to_string();
 	dmarc_record.fo = dmarc_record.fo.trim_matches('\"').trim().to_string();
 
-	dmarc_record
+	let dmarc_record_json = serde_json::to_value(dmarc_record).expect("Error converting dmarc record to json");
+	return dmarc_record_json;
 }
 
 
@@ -352,7 +363,7 @@ fn dmarc(domain: String) -> DMARC
 /// `domain` *String* - The domain name
 /// # Return
 /// `mta_record` *MTASTS* - The structured mta-sts record of the domain
-pub(crate) fn mta(domain: String) -> MTASTS
+pub(crate) fn mta(domain: String) -> Value
 {
 	// Run the `dig` command to retrieve the MTA-STS record for the domain
 	let output = Command::new("dig")
@@ -374,7 +385,8 @@ pub(crate) fn mta(domain: String) -> MTASTS
 
 	if output_str.is_empty()
 	{
-		return mta_record;
+		let mta_record_json = serde_json::to_value(mta_record).expect("Error converting mta record to json");
+		return mta_record_json;
 	}
 
 	let session_string = output_str;
@@ -424,8 +436,9 @@ pub(crate) fn mta(domain: String) -> MTASTS
 	}
 	
 	mta_record.used = true;
-	
-	return mta_record;
+
+	let mta_record_json = serde_json::to_value(mta_record).expect("Error converting mta record to json");
+	return mta_record_json;
 }
 
 /// # Brief
@@ -434,7 +447,7 @@ pub(crate) fn mta(domain: String) -> MTASTS
 /// `domain` *String* - The domain name
 /// # Return
 /// `spf_record` *SPF* - The structured spf record of the domain
-fn spf(domain: String) -> SPF
+fn spf(domain: String) -> Value
 {
 	// Exécute la commande `dig` et récupère la sortie standard
 	let output = Command::new("dig")
@@ -464,7 +477,8 @@ fn spf(domain: String) -> SPF
 	// Retour d'une structure vide si le serveur ne renvoie rien d'intéressant
 	if output_str.is_empty()
 	{
-		return spf_record;
+		let spf_record_json = serde_json::to_value(spf_record).expect("Error converting spf record to json");
+		return spf_record_json;
 	}
 
 	// Pour chaque ligne, vérifie si elle contient le record SPF
@@ -506,8 +520,9 @@ fn spf(domain: String) -> SPF
 	}
 	
 	spf_record.used = true;
-	
-	spf_record
+
+	let spf_record_json = serde_json::to_value(spf_record).expect("Error converting spf record to json");
+	return spf_record_json;
 }
 
 /// # Brief
@@ -516,7 +531,7 @@ fn spf(domain: String) -> SPF
 /// `domain` *String* - The domain name
 /// # Return
 /// `tls_record` *TLSRTP* - The structured tls-rpt record of the domain
-fn tls_rtp(domain: String) -> TLSRTP
+fn tls_rtp(domain: String) -> Value
 {
 	// Run the `dig` command to retrieve the TLS-RPT record for the domain
 	let output = Command::new("dig")
@@ -538,7 +553,8 @@ fn tls_rtp(domain: String) -> TLSRTP
 
 	if output_str.is_empty()
 	{
-		return tls_record;
+		let tls_record_json = serde_json::to_value(tls_record).expect("Error converting tls record to json");
+		return tls_record_json;
 	}
 
 	for line in output_str.lines()
@@ -575,8 +591,9 @@ fn tls_rtp(domain: String) -> TLSRTP
 	}
 	
 	tls_record.used = true;
-	
-	return tls_record;
+
+	let tls_record_json = serde_json::to_value(tls_record).expect("Error converting tls record to json");
+	return tls_record_json;
 }
 
 /// # Brief
@@ -589,7 +606,7 @@ fn tls_rtp(domain: String) -> TLSRTP
 /// `domain_record` *Domain* - The structured domain record of the domain
 pub(crate) fn dns(domain: &str) -> Domain
 {
-	let domain_struct = String::from(&domain);
+	let domain_struct = String::from(domain);
 	let domain_function = domain_struct.clone();
 	
 	let domain_record = Domain
@@ -597,7 +614,7 @@ pub(crate) fn dns(domain: &str) -> Domain
 		id: 0,
 		domain: domain_struct.clone(),
 		bimi: bimi(domain_function.clone()),
-		certificate: (),
+		certificate: certificate(domain_function.clone()),
 		dane: dane(domain_function.clone()),
 		dmarc: dmarc(domain_function.clone()),
 		mta: mta(domain_function.clone()),

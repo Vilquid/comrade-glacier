@@ -17,7 +17,7 @@ diesel::table! {
 diesel::table! {
     ports (id) {
         id -> Int8,
-        ip -> Inet,
+        ip -> Text,
         port_25_open -> Bool,
         domain -> Text,
     }

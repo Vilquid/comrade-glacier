@@ -1,8 +1,9 @@
-pub use std::net::Ipv4Addr;
+use std::fmt::{Debug};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
-use crate::schema::ports;
-
+use crate::schema::*;
+use diesel::{Insertable};
+use serde_json::Value;
 
 
 /// # Brief
@@ -16,17 +17,25 @@ use crate::schema::ports;
 /// - `ip` *Ipv4Addr* - The IP address of the server
 /// - `port_25_open` *bool* - Whether port 25 is open
 /// - `domain` *String* - The domain name of the server
-#[derive(Queryable, Selectable, Serialize, Deserialize)]
+#[derive(Queryable, Selectable)]
 #[diesel(table_name = crate::schema::ports)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Port
 {
-	pub id: u64,
-	pub ip: Ipv4Addr,
+	pub id: i64,
+	pub ip: String,
 	pub port_25_open: bool,
 	pub domain: String,
 }
 
+#[derive(Insertable)]
+#[diesel(table_name = ports)]
+pub struct NewPort
+{
+	pub ip: String,
+	pub port_25_open: bool,
+	pub domain: String,
+}
 /// # Brief
 /// Model for the `domain` table in the database.
 /// # Fields
@@ -39,29 +48,35 @@ pub struct Port
 /// - ``mta` *MTA* - The mta record of `domain`
 /// - ``tls_rpt` *TLS* - The tls record of `domain`
 /// - ``spf` *SPF* - The spf record of `domain`
-#[derive(Queryable, Selectable)]
+#[derive(Queryable, Selectable, Deserialize, Serialize)]
 #[diesel(table_name = crate::schema::domains)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
+#[diesel(sql_type = Jsonb)]
 pub struct Domain
 {
-	pub id: u64,
+	pub id: i64,
 	pub domain: String,
-	pub bimi: BIMI,
-	pub certificate: Certificate,
-	pub dane: DANE,
-	pub dmarc: DMARC,
-	pub mta: MTASTS,
-	pub tls_rpt: TLSRTP,
-	pub spf: SPF,
+	pub bimi: Value,
+	pub certificate: Value,
+	pub dane: Value,
+	pub dmarc: Value,
+	pub mta: Value,
+	pub tls_rpt: Value,
+	pub spf: Value,
 }
 
 #[derive(Insertable)]
-#[diesel(table_name = ports)]
-pub struct NewPort
+#[diesel(table_name = domains)]
+pub struct NewDomain
 {
-	pub ip: Ipv4Addr,
-	pub port_25_open: bool,
 	pub domain: String,
+	pub bimi: Value,
+	pub certificate: Value,
+	pub dane: Value,
+	pub dmarc: Value,
+	pub mta: Value,
+	pub tls_rpt: Value,
+	pub spf: Value,
 }
 
 /// # Brief
@@ -210,7 +225,7 @@ pub struct DMARC
 	pub aspf: String,
 	pub fo: String,
 	pub p: String,
-	pub pct: i16,
+	pub pct: i32,
 	pub sp: String,
 	pub rf: String,
 	pub ri: String,
@@ -244,7 +259,9 @@ pub struct MTASTS
 /// - include *Vec<String>* : list of included domains
 /// - redirect *String* : To redirect the evaluation of the SPF policy to another domain
 /// - all *String* : Verification mechanism that specifies what action to take if none of the previous checks match
-#[derive(Serialize, Debug)]
+// #[derive(Serialize, Debug)]
+#[derive(Queryable, Deserialize, Serialize)]
+#[diesel(sql_type = Jsonb)]
 pub struct SPF
 {
 	pub used: bool,

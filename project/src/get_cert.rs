@@ -22,7 +22,7 @@ const PARSE_ERRORS_FATAL: bool = false;
 const VALIDATE_ERRORS_FATAL: bool = false;
 
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq)]
 pub struct ServerCert {
 	pub subject_country: String,
 	pub subject_state: String,
@@ -54,7 +54,7 @@ pub struct ServerCert {
 	pub extensions_subject_alternate_names: String,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq)]
 pub struct IntermediateCert {
 	pub subject_country: String,
 	pub subject_state: String,
@@ -86,7 +86,7 @@ pub struct IntermediateCert {
 	pub extensions_subject_alternate_names: String,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq)]
 pub struct Cert {
 	pub server: ServerCert,
 	pub intermediate: IntermediateCert,

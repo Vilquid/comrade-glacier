@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "ports" (
     "id" BIGSERIAL PRIMARY KEY,
-    "ip" INET NOT NULL,
+    "ip" TEXT NOT NULL,
     "port_25_open" BOOLEAN NOT NULL,
     "domain" TEXT NOT NULL
 );

@@ -37,4 +37,6 @@ pub(crate) fn log(level: &str, message: &str)
 	log_file
 		.write_all(format!("[{}] - {} - {}\n", level, time, message).as_ref())
 		.expect("cannot write to file");
+
+	
 }

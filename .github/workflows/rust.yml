@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - '**.rs'
+      - '**/**.rs'
   pull_request:
     branches:
       - main
     paths:
-      - '**.rs'
+      - '**/**.rs'
 
 env:
   CARGO_TERM_COLOR: always
@@ -71,10 +71,6 @@ jobs:
           override: true
 
       - name: Run tests
-#        uses: actions-rs/cargo@v1
-#        with:
-#          command: test
-#          args: --verbose
         run: cd project && cargo test --verbose
 
   clippy:
@@ -114,10 +110,6 @@ jobs:
           override: true
 
       - name: Build
-#        uses: actions-rs/cargo@v1
-#        with:
-#          command: build
-#          args: --release --verbose
         run: cd project && cargo build --release --verbose
 
   security_audit:

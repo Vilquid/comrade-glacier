@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - '**.rs'
+      - '**/**.rs'
   pull_request:
     branches:
       - main
     paths:
-      - '**.rs'
+      - '**/**.rs'
 
 env:
   CARGO_TERM_COLOR: always

@@ -1,3 +1,4 @@
+---
 name: Yaml CI
 
 on:
@@ -23,4 +24,4 @@ jobs:
         run: pip install yamllint
         
       - name: Run yamllint
-        run:  cd .github/workflows && yamllint .
+        run: cd .github/workflows && yamllint .

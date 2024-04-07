@@ -7,3 +7,5 @@
 [INFO] - 2024/03/31 16:27:45.825 - Début du programme Comrade Glacier
 [INFO] - 2024/03/31 16:36:35.437 - Début du programme Comrade Glacier
 [INFO] - 2024/03/31 17:07:14.423 - Début du programme Comrade Glacier
+[INFO] - 2024/04/07 14:02:21.294 - Début du programme Comrade Glacier
+[INFO] - 2024/04/07 14:02:48.399 - Début du programme Comrade Glacier

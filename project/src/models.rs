@@ -3,7 +3,6 @@ use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 use crate::schema::*;
 use diesel::Insertable;
-use serde_json::Value;
 
 
 /// # Brief

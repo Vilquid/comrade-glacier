@@ -1,7 +1,6 @@
 use std::process::Command;
 use std::str::from_utf8;
-use serde_json::Value;
-use crate::models::{Certificate, Domain, IssuerDetails, NewDomain, SubjectDetails, ValidityDetails, BIMI, DANE, DMARC, MTASTS, SPF, TLSRTP};
+use crate::models::{Certificate, IssuerDetails, NewDomain, SubjectDetails, ValidityDetails, BIMI, DANE, DMARC, MTASTS, SPF, TLSRTP};
 
 
 /// # Brief
@@ -10,7 +9,7 @@ use crate::models::{Certificate, Domain, IssuerDetails, NewDomain, SubjectDetail
 /// `domain` *String* - The domain name
 /// # Return
 /// `bimi_record` *BIMI* - The structured bimi record of the domain
-fn bimi(domain: String) -> BIMI
+pub(crate) fn bimi(domain: String) -> BIMI
 {
 	// Get the bimi record of the domain
 	let output = Command::new("dig")
@@ -37,8 +36,7 @@ fn bimi(domain: String) -> BIMI
 
 	if output_str.is_empty()
 	{
-		let bimi_record_json = serde_json::to_value(bimi_record).expect("Error converting bimi record to json");
-		return bimi_record_json;
+		return bimi_record;
 	}
 
 	for line in output_str.lines()
@@ -192,7 +190,7 @@ fn certificate(_domain: String) -> Certificate
 	certificate_record
 }
 
-fn dane(domain: String) -> Dane
+fn dane(domain: String) -> DANE
 {
 	// Get the dane record for the domain 
 	let output = Command::new("dig")
@@ -250,8 +248,8 @@ fn dane(domain: String) -> Dane
 			dane_record.hash = words[3].to_string().to_owned();
 		}
 
-		dane_record.certificate_shape = dane_record.certificate_shape.trim_matches(';').trim().to_string();
-		dane_record.certificate_shape = dane_record.certificate_shape.trim_matches('\n').trim().to_string();
+		// dane_record.certificate_shape = dane_record.certificate_shape.trim_matches(';').trim().to_string();
+		// dane_record.certificate_shape = dane_record.certificate_shape.trim_matches('\n').trim().to_string();
 	}
 
 	dane_record.used = true;
@@ -305,7 +303,7 @@ fn dmarc(domain: String) -> DMARC
 
 	if dmarc_starting.is_empty()
 	{
-		dmarc_record_json
+		return dmarc_record;
 	}
 
 	let s = dmarc_starting;
@@ -381,7 +379,7 @@ fn mta(domain: String) -> MTASTS
 
 	if output_str.is_empty()
 	{
-		mta_record
+		return mta_record;
 	}
 
 	let session_string = output_str;
@@ -472,7 +470,7 @@ fn spf(domain: String) -> SPF
 	// Retour d'une structure vide si le serveur ne renvoie rien d'intéressant
 	if output_str.is_empty()
 	{
-		spf_record
+		return spf_record;
 	}
 
 	// Pour chaque ligne, vérifie si elle contient le record SPF
@@ -524,7 +522,7 @@ fn spf(domain: String) -> SPF
 /// `domain` *String* - The domain name
 /// # Return
 /// `tls_record` *TLSRTP* - The structured tls-rpt record of the domain
-fn tls_rtp(domain: String) -> Value
+fn tls_rtp(domain: String) -> TLSRTP
 {
 	// Run the `dig` command to retrieve the TLS-RPT record for the domain
 	let output = Command::new("dig")
@@ -546,7 +544,7 @@ fn tls_rtp(domain: String) -> Value
 
 	if output_str.is_empty()
 	{
-		tls_record
+		return tls_record;
 	}
 
 	for line in output_str.lines()
@@ -595,7 +593,7 @@ fn tls_rtp(domain: String) -> Value
 /// let domain = domain("example.com");
 /// # Return
 /// `domain_record` *Domain* - The structured domain record of the domain
-pub(crate) fn dns(domain: &str) -> Domain
+pub(crate) fn dns(domain: &str) -> NewDomain
 {
 	let domain_struct = String::from(domain);
 	let domain_function = domain_struct.clone();
@@ -619,12 +617,13 @@ pub(crate) fn dns(domain: &str) -> Domain
 		bimi_hash: bimi.hash,
 		bimi_s: bimi.s,
 		certificate_used: certificate.used,
+		certificate_signature_algorithm_server: "".to_string(),
 		certificate_issuer_server_city: certificate.issuer_server.city,
 		certificate_issuer_server_state: certificate.issuer_server.state,
 		certificate_issuer_server_locality: certificate.issuer_server.locality,
 		certificate_issuer_server_organization: certificate.issuer_server.organization,
 		certificate_issuer_server_common_name: certificate.issuer_server.common_name,
-		certificate_signature_server: certificate.signature_algorithm_server,
+		// certificate_signature_server: certificate.signature_algorithm_server,
 		certificate_validity_server_not_before: certificate.validity_server.not_before,
 		certificate_validity_server_not_after: certificate.validity_server.not_after,
 		certificate_validity_server_is_valid: certificate.validity_server.is_valid,
@@ -634,15 +633,16 @@ pub(crate) fn dns(domain: &str) -> Domain
 		certificate_subject_server_organization: certificate.subject_server.organization,
 		certificate_subject_server_common_name: certificate.subject_server.common_name,
 		certificate_extensions_server_subject_alternative_names: certificate.extensions_server_subject_alternative_names,
+		certificate_signature_algorithm_intermediate: "".to_string(),
 		certificate_issuer_intermediate_city: certificate.issuer_intermediate.city,
 		certificate_issuer_intermediate_state: certificate.issuer_intermediate.state,
 		certificate_issuer_intermediate_locality: certificate.issuer_intermediate.locality,
 		certificate_issuer_intermediate_organization: certificate.issuer_intermediate.organization,
 		certificate_issuer_intermediate_common_name: certificate.issuer_intermediate.common_name,
-		certificate_signature_intermediate: certificate.signature_algorithm_intermediate,
+		// certificate_signature_intermediate: certificate.signature_algorithm_intermediate,
 		certificate_validity_intermediate_not_before: certificate.validity_intermediate.not_before,
 		certificate_validity_intermediate_not_after: certificate.validity_intermediate.not_after,
-		certificate_validity_intermediate_is_valid: certificate.validity_intermediate.is_valid,
+		// certificate_validity_intermediate_is_valid: certificate.validity_intermediate.is_valid,
 		certificate_subject_intermediate_city: certificate.subject_intermediate.city,
 		certificate_subject_intermediate_state: certificate.subject_intermediate.state,
 		certificate_subject_intermediate_locality: certificate.subject_intermediate.locality,

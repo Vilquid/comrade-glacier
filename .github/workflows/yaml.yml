@@ -23,4 +23,4 @@ jobs:
         run: pip install yamllint
         
       - name: Run yamllint
-        run:  cd project && yamllint
+        run:  cd .github/workflows && yamllint

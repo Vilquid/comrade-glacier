@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS "ports";
+DROP TABLE IF EXISTS "domains";

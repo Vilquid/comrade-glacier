@@ -1,3 +1,4 @@
+---
 name: Rust CI
 
 on:
@@ -11,6 +12,9 @@ on:
       - main
     paths:
       - '**/**.rs'
+
+rules:
+  truthy: disable
 
 env:
   CARGO_TERM_COLOR: always
@@ -49,11 +53,7 @@ jobs:
           override: true
 
       - name: Check formatting
-#        uses: actions-rs/cargo@v1
-#        with:
-#          command: fmt
-#          args: --all -- --check
-        run: cd project && cargo fmt # --all -- --check
+        run: cd project && cargo fmt
 
   tests:
     name: Tests
@@ -75,7 +75,6 @@ jobs:
 
   clippy:
     name: Lint with Clippy
-    needs: [check, tests, format]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources

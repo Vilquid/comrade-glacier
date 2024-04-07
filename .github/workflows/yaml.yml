@@ -1,3 +1,4 @@
+---
 name: Yaml CI
 
 on:
@@ -12,6 +13,9 @@ on:
     paths:
       - '**/**.yml'
 
+rules:
+  truthy: disable
+
 jobs:
   yamllint:
     runs-on: ubuntu-latest
@@ -21,6 +25,6 @@ jobs:
 
       - name: Install yamllint
         run: pip install yamllint
-        
+
       - name: Run yamllint
-        run:  cd project && yamllint
+        run: cd .github/workflows && yamllint .

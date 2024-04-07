@@ -1,7 +1,7 @@
 use std::process::Command;
 use std::str::from_utf8;
 use serde_json::Value;
-use crate::models::{BIMI, Certificate, DANE, DMARC, Domain, IssuerDetails, MTASTS, SPF, SubjectDetails, TLSRTP, ValidityDetails};
+use crate::models::{Certificate, Domain, IssuerDetails, NewDomain, SubjectDetails, ValidityDetails, BIMI, DANE, DMARC, MTASTS, SPF, TLSRTP};
 
 
 /// # Brief
@@ -10,7 +10,7 @@ use crate::models::{BIMI, Certificate, DANE, DMARC, Domain, IssuerDetails, MTAST
 /// `domain` *String* - The domain name
 /// # Return
 /// `bimi_record` *BIMI* - The structured bimi record of the domain
-fn bimi(domain: String) -> Value
+fn bimi(domain: String) -> BIMI
 {
 	// Get the bimi record of the domain
 	let output = Command::new("dig")
@@ -76,10 +76,12 @@ fn bimi(domain: String) -> Value
 		}
 	}
 
-	serde_json::to_value(bimi_record).expect("Error converting bimi record to json")
+	bimi_record.used = true;
+
+	bimi_record
 }
 
-fn certificate(_domain: String) -> Value
+fn certificate(_domain: String) -> Certificate
 {
 	let issuer_server = IssuerDetails
 	{
@@ -187,10 +189,10 @@ fn certificate(_domain: String) -> Value
 		extensions_intermediate_subject_alternative_names,
 	};
 
-	serde_json::to_value(certificate_record).expect("Error converting certificate record to json")
+	certificate_record
 }
 
-pub fn dane(domain: String) -> Value
+fn dane(domain: String) -> Dane
 {
 	// Get the dane record for the domain 
 	let output = Command::new("dig")
@@ -217,14 +219,11 @@ pub fn dane(domain: String) -> Value
 	// Si la sortie de dig est vide, on retourne un DANERecord vide
 	if output_str.is_empty()
 	{
-		let dane_record_json = serde_json::to_value(dane_record).expect("Error converting dane record to json");
-		return dane_record_json;
+		return dane_record;
 	}
 	
-	println!("{}", output_str);
 	// Affichage des variables pour le details 
 	let words: Vec<&str> = output_str.split(' ').collect();
-	
 	
 	if words.len() >= 5
 	{
@@ -251,11 +250,13 @@ pub fn dane(domain: String) -> Value
 			dane_record.hash = words[3].to_string().to_owned();
 		}
 
-		// dane_record.certificate_shape = dane_record.certificate_shape.trim_matches(';').trim().to_string();
-		// dane_record.certificate_shape = dane_record.certificate_shape.trim_matches('\n').trim().to_string();
+		dane_record.certificate_shape = dane_record.certificate_shape.trim_matches(';').trim().to_string();
+		dane_record.certificate_shape = dane_record.certificate_shape.trim_matches('\n').trim().to_string();
 	}
 
-	serde_json::to_value(dane_record).expect("Error converting dane record to json")
+	dane_record.used = true;
+
+	dane_record
 }
 
 /// # Brief
@@ -264,7 +265,7 @@ pub fn dane(domain: String) -> Value
 /// `domain` *String* - The domain name
 /// # Return
 /// `dmarc_record` *DMARC* - The structured dmarc record of the domain
-fn dmarc(domain: String) -> Value
+fn dmarc(domain: String) -> DMARC
 {
 	// Get the dmarc record of the domain
 	let output = Command::new("dig")
@@ -304,8 +305,7 @@ fn dmarc(domain: String) -> Value
 
 	if dmarc_starting.is_empty()
 	{
-		let dmarc_record_json = serde_json::to_value(dmarc_record).expect("Error converting dmarc record to json");
-		return dmarc_record_json;
+		dmarc_record_json
 	}
 
 	let s = dmarc_starting;
@@ -349,7 +349,7 @@ fn dmarc(domain: String) -> Value
 	dmarc_record.ruf = dmarc_record.ruf.trim_matches(';').trim().to_string();
 	dmarc_record.fo = dmarc_record.fo.trim_matches('\"').trim().to_string();
 
-	serde_json::to_value(dmarc_record).expect("Error converting dmarc record to json")
+	dmarc_record
 }
 
 
@@ -359,7 +359,7 @@ fn dmarc(domain: String) -> Value
 /// `domain` *String* - The domain name
 /// # Return
 /// `mta_record` *MTASTS* - The structured mta-sts record of the domain
-pub(crate) fn mta(domain: String) -> Value
+fn mta(domain: String) -> MTASTS
 {
 	// Run the `dig` command to retrieve the MTA-STS record for the domain
 	let output = Command::new("dig")
@@ -381,8 +381,7 @@ pub(crate) fn mta(domain: String) -> Value
 
 	if output_str.is_empty()
 	{
-		let mta_record_json = serde_json::to_value(mta_record).expect("Error converting mta record to json");
-		return mta_record_json;
+		mta_record
 	}
 
 	let session_string = output_str;
@@ -434,7 +433,7 @@ pub(crate) fn mta(domain: String) -> Value
 	
 	mta_record.used = true;
 
-	serde_json::to_value(mta_record).expect("Error converting mta record to json")
+	mta_record
 }
 
 /// # Brief
@@ -443,7 +442,7 @@ pub(crate) fn mta(domain: String) -> Value
 /// `domain` *String* - The domain name
 /// # Return
 /// `spf_record` *SPF* - The structured spf record of the domain
-fn spf(domain: String) -> Value
+fn spf(domain: String) -> SPF
 {
 	// Exécute la commande `dig` et récupère la sortie standard
 	let output = Command::new("dig")
@@ -473,8 +472,7 @@ fn spf(domain: String) -> Value
 	// Retour d'une structure vide si le serveur ne renvoie rien d'intéressant
 	if output_str.is_empty()
 	{
-		let spf_record_json = serde_json::to_value(spf_record).expect("Error converting spf record to json");
-		return spf_record_json;
+		spf_record
 	}
 
 	// Pour chaque ligne, vérifie si elle contient le record SPF
@@ -517,7 +515,7 @@ fn spf(domain: String) -> Value
 	
 	spf_record.used = true;
 
-	serde_json::to_value(spf_record).expect("Error converting spf record to json")
+	spf_record
 }
 
 /// # Brief
@@ -548,8 +546,7 @@ fn tls_rtp(domain: String) -> Value
 
 	if output_str.is_empty()
 	{
-		let tls_record_json = serde_json::to_value(tls_record).expect("Error converting tls record to json");
-		return tls_record_json;
+		tls_record
 	}
 
 	for line in output_str.lines()
@@ -587,7 +584,7 @@ fn tls_rtp(domain: String) -> Value
 	
 	tls_record.used = true;
 
-	serde_json::to_value(tls_record).expect("Error converting tls record to json")
+	tls_record
 }
 
 /// # Brief
@@ -602,18 +599,86 @@ pub(crate) fn dns(domain: &str) -> Domain
 {
 	let domain_struct = String::from(domain);
 	let domain_function = domain_struct.clone();
+
+	let bimi = bimi(domain_function.clone());
+	let certificate = certificate(domain_function.clone());
+	let dane = dane(domain_function.clone());
+	let dmarc = dmarc(domain_function.clone());
+	let mta = mta(domain_function.clone());
+	let spf = spf(domain_function.clone());
+	let tls_rpt = tls_rtp(domain_function.clone());
 	
-	Domain
+	NewDomain
 	{
-		id: 0,
 		domain: domain_struct.clone(),
-		bimi: bimi(domain_function.clone()),
-		certificate: certificate(domain_function.clone()),
-		dane: dane(domain_function.clone()),
-		dmarc: dmarc(domain_function.clone()),
-		mta: mta(domain_function.clone()),
-		tls_rpt: tls_rtp(domain_function.clone()),
-		spf: spf(domain_function.clone()),
+		bimi_used: bimi.used,
+		bimi_version: bimi.version,
+		bimi_url_sender: bimi.url_sender,
+		bimi_url_policy: bimi.url_policy,
+		bimi_url_reputation: bimi.url_reputation,
+		bimi_hash: bimi.hash,
+		bimi_s: bimi.s,
+		certificate_used: certificate.used,
+		certificate_issuer_server_city: certificate.issuer_server.city,
+		certificate_issuer_server_state: certificate.issuer_server.state,
+		certificate_issuer_server_locality: certificate.issuer_server.locality,
+		certificate_issuer_server_organization: certificate.issuer_server.organization,
+		certificate_issuer_server_common_name: certificate.issuer_server.common_name,
+		certificate_signature_server: certificate.signature_algorithm_server,
+		certificate_validity_server_not_before: certificate.validity_server.not_before,
+		certificate_validity_server_not_after: certificate.validity_server.not_after,
+		certificate_validity_server_is_valid: certificate.validity_server.is_valid,
+		certificate_subject_server_city: certificate.subject_server.city,
+		certificate_subject_server_state: certificate.subject_server.state,
+		certificate_subject_server_locality: certificate.subject_server.locality,
+		certificate_subject_server_organization: certificate.subject_server.organization,
+		certificate_subject_server_common_name: certificate.subject_server.common_name,
+		certificate_extensions_server_subject_alternative_names: certificate.extensions_server_subject_alternative_names,
+		certificate_issuer_intermediate_city: certificate.issuer_intermediate.city,
+		certificate_issuer_intermediate_state: certificate.issuer_intermediate.state,
+		certificate_issuer_intermediate_locality: certificate.issuer_intermediate.locality,
+		certificate_issuer_intermediate_organization: certificate.issuer_intermediate.organization,
+		certificate_issuer_intermediate_common_name: certificate.issuer_intermediate.common_name,
+		certificate_signature_intermediate: certificate.signature_algorithm_intermediate,
+		certificate_validity_intermediate_not_before: certificate.validity_intermediate.not_before,
+		certificate_validity_intermediate_not_after: certificate.validity_intermediate.not_after,
+		certificate_validity_intermediate_is_valid: certificate.validity_intermediate.is_valid,
+		certificate_subject_intermediate_city: certificate.subject_intermediate.city,
+		certificate_subject_intermediate_state: certificate.subject_intermediate.state,
+		certificate_subject_intermediate_locality: certificate.subject_intermediate.locality,
+		certificate_subject_intermediate_organization: certificate.subject_intermediate.organization,
+		certificate_subject_intermediate_common_name: certificate.subject_intermediate.common_name,
+		certificate_extensions_intermediate_subject_alternative_names: certificate.extensions_intermediate_subject_alternative_names,
+		dane_used: dane.used,
+		dane_certificate_shape: dane.certificate_shape,
+		dane_certificate_signature: dane.certificate_signature,
+		dane_hash_presence: dane.hash_presence,
+		dane_hash: dane.hash,
+		dane_public_key_signature: dane.public_key_signature,
+		dmarc_used: dmarc.used,
+		dmarc_v: dmarc.v,
+		dmarc_adkim: dmarc.adkim,
+		dmarc_aspf: dmarc.aspf,
+		dmarc_fo: dmarc.fo,
+		dmarc_p: dmarc.p,
+		dmarc_pct: dmarc.pct,
+		dmarc_rf: dmarc.rf,
+		dmarc_ri: dmarc.ri,
+		dmarc_rua: dmarc.rua,
+		dmarc_ruf: dmarc.ruf,
+		dmarc_sp: dmarc.sp,
+		mta_used: mta.used,
+		mta_version: mta.version,
+		mta_sn: mta.sn,
+		spf_used: spf.used,
+		spf_version: spf.version,
+		spf_mechanisms: spf.mechanisms,
+		spf_qualifier: spf.qualifier,
+		spf_ip: spf.ip,
+		spf_include: spf.include,
+		spf_all: spf.all,
+		tls_rpt_used: tls_rpt.used,
+		tls_rpt_v: tls_rpt.v,
+		tls_rpt_rua: tls_rpt.rua,
 	}
 }
-

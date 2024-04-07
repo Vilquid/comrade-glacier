@@ -2,7 +2,8 @@ use std::fmt::Debug;
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 use crate::schema::*;
-use diesel::Insertable;
+use diesel::{Insertable, QueryId};
+use diesel::expression::Expression;
 
 
 /// # Brief
@@ -75,7 +76,7 @@ pub struct NewPort
 /// - `dmarc_p` *String* : Requested policy
 /// - `dmarc_pct` *i16* : Percentage of messages subjected  to applying the dmarc policy
 /// - `dmarc_sp` *String* : Requested policy for subdomains
-/// - `dmarc_rf` *String* : Format to use for reports of specific legal informations about the message  
+/// - `dmarc_rf` *String* : Format to use for reports of specific legal informations about the message
 /// - `dmarc_ri` *String* : Interval in seconds between aggregate reports
 /// - `dmarc_rua` *String* : URL to which aggregate reports are sent
 /// - `dmarc_ruf` *String* : URL to which reports of failures are sent
@@ -87,7 +88,7 @@ pub struct NewPort
 /// - `tls_rpt_rua` *String* : URL to which reports are sent
 /// # Comments
 /// La doc pour la partie certificat n'est pas implémentée pour le moment
-#[derive(Queryable, Selectable)]
+#[derive(Queryable, Selectable, QueryId)]
 #[diesel(table_name = crate::schema::domains)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Domain
@@ -192,7 +193,7 @@ pub struct Domain
 /// - `dmarc_p` *String* : Requested policy
 /// - `dmarc_pct` *i16* : Percentage of messages subjected  to applying the dmarc policy
 /// - `dmarc_sp` *String* : Requested policy for subdomains
-/// - `dmarc_rf` *String* : Format to use for reports of specific legal informations about the message  
+/// - `dmarc_rf` *String* : Format to use for reports of specific legal informations about the message
 /// - `dmarc_ri` *String* : Interval in seconds between aggregate reports
 /// - `dmarc_rua` *String* : URL to which aggregate reports are sent
 /// - `dmarc_ruf` *String* : URL to which reports of failures are sent
@@ -204,7 +205,7 @@ pub struct Domain
 /// - `tls_rpt_rua` *String* : URL to which reports are sent
 /// # Comments
 /// La doc pour la partie certificat n'est pas implémentée pour le moment
-#[derive(Insertable)]
+#[derive(Insertable, QueryId)]
 #[diesel(table_name = domains)]
 pub struct NewDomain
 {

@@ -19,13 +19,13 @@ use crate::schema::{domains, ports};
 /// mod bdd;
 /// pub fn add_domain(domain: &str) -> Domain
 /// {
-/// 	let mut connection = establish_connection();
+///     let mut connection = establish_connection();
 /// 
-/// 	diesel::insert_into(domains::table)
-/// 		.values(&dns(domain))
-/// 		.returning(Domain::as_returning())
-/// 		.get_result(&mut connection)
-/// 		.expect("Error saving new domain")
+///     diesel::insert_into(domains::table)
+///         .values(&dns(domain))
+///         .returning(Domain::as_returning())
+///         .get_result(&mut connection)
+///         .expect("Error saving new domain")
 /// }
 #[inline]
 fn establish_connection() -> PgConnection
@@ -51,13 +51,6 @@ fn establish_connection() -> PgConnection
 pub fn add_port(port: NewPort) -> Port
 {
 	let mut connection = establish_connection();
-
-	let port = NewPort
-	{
-		ip: port.ip,
-		port_25_open: port.port_25_open,
-		domain: port.domain,
-	};
 
 	diesel::insert_into(ports::table)
 		.values(&port)

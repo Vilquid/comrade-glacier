@@ -5,11 +5,16 @@ use crate::models::{Certificate, IssuerDetails, NewDomain, SubjectDetails, Valid
 
 /// # Brief
 /// To get the structured bimi record of a domain
+/// # Attributes
+/// inline
 /// # Parameters
 /// `domain` *String* - The domain name
 /// # Return
-/// `bimi_record` *BIMI* - The structured bimi record of the domain
-pub(crate) fn bimi(domain: String) -> BIMI
+/// *BIMI* - The structured bimi record of the domain
+/// # Usage
+/// bimi(domain);
+#[inline]
+fn bimi(domain: String) -> BIMI
 {
 	// Get the bimi record of the domain
 	let output = Command::new("dig")
@@ -79,6 +84,17 @@ pub(crate) fn bimi(domain: String) -> BIMI
 	bimi_record
 }
 
+/// # Brief
+/// To get the structured certificate record of a domain
+/// # Attributes
+/// inline
+/// # Parameters
+/// `domain` *String* - The domain name
+/// # Return
+/// *Certificate* - The structured certificate record of the domain
+/// # Usage
+/// certificate(domain);
+#[inline]
 fn certificate(_domain: String) -> Certificate
 {
 	let issuer_server = IssuerDetails
@@ -190,6 +206,17 @@ fn certificate(_domain: String) -> Certificate
 	certificate_record
 }
 
+/// # Brief
+/// To get the structured dane record of a domain
+/// # Attributes
+/// inline
+/// # Parameters
+/// `domain` *String* - The domain name
+/// # Return
+/// *DANE* - The structured dane record of the domain
+/// # Usage
+/// dane(domain);
+#[inline]
 fn dane(domain: String) -> DANE
 {
 	// Get the dane record for the domain 
@@ -259,10 +286,15 @@ fn dane(domain: String) -> DANE
 
 /// # Brief
 /// To get the structured dmarc record of a domain
+/// # Attributes
+/// inline
 /// # Parameters
 /// `domain` *String* - The domain name
 /// # Return
-/// `dmarc_record` *DMARC* - The structured dmarc record of the domain
+/// *DMARC* - The structured dmarc record of the domain
+/// # Usage
+/// dmarc(domain);
+#[inline]
 fn dmarc(domain: String) -> DMARC
 {
 	// Get the dmarc record of the domain
@@ -350,13 +382,17 @@ fn dmarc(domain: String) -> DMARC
 	dmarc_record
 }
 
-
 /// # Brief
 /// Get the mta-sts record of a domain
+/// # Attributes
+/// inline
 /// # Arguments
 /// `domain` *String* - The domain name
 /// # Return
 /// `mta_record` *MTASTS* - The structured mta-sts record of the domain
+/// # Usage
+/// mta(domain);
+#[inline]
 fn mta(domain: String) -> MTASTS
 {
 	// Run the `dig` command to retrieve the MTA-STS record for the domain
@@ -436,10 +472,15 @@ fn mta(domain: String) -> MTASTS
 
 /// # Brief
 /// Get the spf record of a domain
-/// # Arguments
+/// # Attributes
+/// inline
+/// # Parameters
 /// `domain` *String* - The domain name
 /// # Return
 /// `spf_record` *SPF* - The structured spf record of the domain
+/// # Usage
+/// spf(domain);
+#[inline]
 fn spf(domain: String) -> SPF
 {
 	// Exécute la commande `dig` et récupère la sortie standard
@@ -518,10 +559,15 @@ fn spf(domain: String) -> SPF
 
 /// # Brief
 /// Get the tls-rpt record of a domain
-/// # Arguments
+/// # Attributes
+/// inline
+/// # Parameters
 /// `domain` *String* - The domain name
 /// # Return
 /// `tls_record` *TLSRTP* - The structured tls-rpt record of the domain
+/// # Usage
+/// tls_rtp(domain);
+#[inline]
 fn tls_rtp(domain: String) -> TLSRTP
 {
 	// Run the `dig` command to retrieve the TLS-RPT record for the domain
@@ -587,12 +633,15 @@ fn tls_rtp(domain: String) -> TLSRTP
 
 /// # Brief
 /// To get the structured domain record of a domain
+/// # Attributes
+/// inline
 /// # Parameters
 /// `domain` *&str* - The domain name
 /// # Usage
 /// let domain = domain("example.com");
 /// # Return
-/// `domain_record` *Domain* - The structured domain record of the domain
+/// *NewDomain* - The structured domain record of the domain
+#[inline]
 pub(crate) fn dns(domain: &str) -> NewDomain
 {
 	let domain_struct = String::from(domain);

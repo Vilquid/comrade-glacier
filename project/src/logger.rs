@@ -16,9 +16,9 @@ use std::io::Write;
 /// use logger::log;
 /// fn main()
 /// {
-///     log("INFO", "Short, simple and explicit message")
+///     log("INFO", "Short, simple and explicit message");
 /// }
-/// # Warnings
+/// # Comments
 /// drop(log_file); is not used because the closing curly bracket is just after the wrinting task of the function.
 #[inline]
 pub(crate) fn log(level: &str, message: &str)
@@ -37,6 +37,4 @@ pub(crate) fn log(level: &str, message: &str)
 	log_file
 		.write_all(format!("[{}] - {} - {}\n", level, time, message).as_ref())
 		.expect("cannot write to file");
-
-	
 }

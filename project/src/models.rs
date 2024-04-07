@@ -8,7 +8,7 @@ use diesel::Insertable;
 /// # Brief
 /// Model for the `ports` table in the database.
 /// # Attributes
-/// - derive(Queryable, Selectable, Serialize, Deserialize)
+/// - derive(Queryable, Selectable)
 /// - diesel(table_name = crate::schema::ports)
 /// - diesel(check_for_backend(diesel::pg::Pg))
 /// # Fields
@@ -27,6 +27,15 @@ pub struct Port
 	pub domain: String,
 }
 
+/// # Brief
+/// Structure to insert in the `ports` table
+/// # Attributes
+/// - derive(Insertable)
+/// - diesel(table_name = ports)
+/// # Fields
+/// - `ip` *Ipv4Addr* - The IP address of the server
+/// - `port_25_open` *bool* - Whether port 25 is open
+/// - `domain` *String* - The domain name of the server
 #[derive(Insertable)]
 #[diesel(table_name = ports)]
 pub struct NewPort
@@ -37,21 +46,50 @@ pub struct NewPort
 }
 
 /// # Brief
-/// Model for the `domain` table in the database.
+/// Model for the `domains` table in the database.
+/// # Attributes
+/// - derive(Queryable, Selectable)
+/// - diesel(table_name = crate::schema::domains)
+/// - diesel(check_for_backend(diesel::pg::Pg))
 /// # Fields
-/// - ``id` *u64* - The unique identifier of `domain`
-/// - ``domain` *String* - The domain name
-/// - ``bimi` *BIMI* - The bimi protocole record of `domain`
-/// - ``certificate` *Certificate* - The certificate record of `domain`
-/// - ``dane` *DANE* - The dane record of `domain`
-/// - ``dmarc` *DMARC* - The dmarc record of `domain`
-/// - ``mta` *MTA* - The mta record of `domain`
-/// - ``tls_rpt` *TLS* - The tls record of `domain`
-/// - ``spf` *SPF* - The spf record of `domain`
-#[derive(Queryable, Selectable, Deserialize, Serialize)]
+/// - `id` *u64* - The unique identifier of `domain`
+/// - `domain` *String* - The domain name
+/// - `bimi_used` *bool* : Whether the bimi record is used
+/// - `bimi_version` *String* : current version of bimi protocol
+/// - `bimi_url_sender` *String* : The URL where the sender's logo (image) is hosted
+/// - `bimi_url_policy` *String* : URL where the sender's bimi policy is published
+/// - `bimi_url_reputation` *String* : URL linked to a reputation service providing information about the sender's reliability and legitimacy
+/// - `bimi_hash` *String* : Hash of the sender's image
+/// - `bimi_s` *String* : Signature of the sender's image
+/// - `dane_used` *bool* : Whether the dane record is used
+/// - `dane_certificate_shape` *i32* : Shape of the certificate
+/// - `dane_certificate_signature` *bool* : Whether the certificate is signed
+/// - `dane_hash_presence` *bool* : Whether a hash is present
+/// - `dane_hash` *String* : The hash of the certificate
+/// - `dane_public_key_signature` *bool* : Whether the public key is signed
+/// - `dmarc_used` *bool* : Whether the dmarc record is used
+/// - `dmarc_v` *String* : Version of dmarc protocol
+/// - `dmarc_adkim` *String* : Alignment mode for dkmin
+/// - `dmarc_aspf` *String* : Alignment mode for spf
+/// - `dmarc_fo` *String* : Reporting fails of options
+/// - `dmarc_p` *String* : Requested policy
+/// - `dmarc_pct` *i16* : Percentage of messages subjected  to applying the dmarc policy
+/// - `dmarc_sp` *String* : Requested policy for subdomains
+/// - `dmarc_rf` *String* : Format to use for reports of specific legal informations about the message  
+/// - `dmarc_ri` *String* : Interval in seconds between aggregate reports
+/// - `dmarc_rua` *String* : URL to which aggregate reports are sent
+/// - `dmarc_ruf` *String* : URL to which reports of failures are sent
+/// - `mta_used` *bool* : Whether the mta-sts record is used
+/// - `mta_version` *String* : version of mta-sts
+/// - `mta_sn` *String* : serial number
+/// - `tls_rpt_used` *bool* : Whether the tls record is used
+/// - `tls_rpt_v` *String* : Version of tls-rpt
+/// - `tls_rpt_rua` *String* : URL to which reports are sent
+/// # Comments
+/// La doc pour la partie certificat n'est pas implémentée pour le moment
+#[derive(Queryable, Selectable)]
 #[diesel(table_name = crate::schema::domains)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
-#[diesel(sql_type = Jsonb)]
 pub struct Domain
 {
 	pub id: i64,
@@ -126,6 +164,46 @@ pub struct Domain
 	pub tls_rpt_rua: String,
 }
 
+/// # Brief
+/// Model for the `domains` table in the database.
+/// # Attributes
+/// - derive(Insertable)
+/// - diesel(table_name = domains)
+/// # Fields
+/// - `domain` *String* - The domain name
+/// - `bimi_used` *bool* : Whether the bimi record is used
+/// - `bimi_version` *String* : current version of bimi protocol
+/// - `bimi_url_sender` *String* : The URL where the sender's logo (image) is hosted
+/// - `bimi_url_policy` *String* : URL where the sender's bimi policy is published
+/// - `bimi_url_reputation` *String* : URL linked to a reputation service providing information about the sender's reliability and legitimacy
+/// - `bimi_hash` *String* : Hash of the sender's image
+/// - `bimi_s` *String* : Signature of the sender's image
+/// - `dane_used` *bool* : Whether the dane record is used
+/// - `dane_certificate_shape` *i32* : Shape of the certificate
+/// - `dane_certificate_signature` *bool* : Whether the certificate is signed
+/// - `dane_hash_presence` *bool* : Whether a hash is present
+/// - `dane_hash` *String* : The hash of the certificate
+/// - `dane_public_key_signature` *bool* : Whether the public key is signed
+/// - `dmarc_used` *bool* : Whether the dmarc record is used
+/// - `dmarc_v` *String* : Version of dmarc protocol
+/// - `dmarc_adkim` *String* : Alignment mode for dkmin
+/// - `dmarc_aspf` *String* : Alignment mode for spf
+/// - `dmarc_fo` *String* : Reporting fails of options
+/// - `dmarc_p` *String* : Requested policy
+/// - `dmarc_pct` *i16* : Percentage of messages subjected  to applying the dmarc policy
+/// - `dmarc_sp` *String* : Requested policy for subdomains
+/// - `dmarc_rf` *String* : Format to use for reports of specific legal informations about the message  
+/// - `dmarc_ri` *String* : Interval in seconds between aggregate reports
+/// - `dmarc_rua` *String* : URL to which aggregate reports are sent
+/// - `dmarc_ruf` *String* : URL to which reports of failures are sent
+/// - `mta_used` *bool* : Whether the mta-sts record is used
+/// - `mta_version` *String* : version of mta-sts
+/// - `mta_sn` *String* : serial number
+/// - `tls_rpt_used` *bool* : Whether the tls record is used
+/// - `tls_rpt_v` *String* : Version of tls-rpt
+/// - `tls_rpt_rua` *String* : URL to which reports are sent
+/// # Comments
+/// La doc pour la partie certificat n'est pas implémentée pour le moment
 #[derive(Insertable)]
 #[diesel(table_name = domains)]
 pub struct NewDomain

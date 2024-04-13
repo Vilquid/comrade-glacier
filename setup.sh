@@ -7,13 +7,13 @@ user=$(whoami)
 
 echo "Add the run alias to your bashrc ?"
 echo "This alias will build and run the project in the project folder"
+
 # shellcheck disable=SC2162
 read -p "Y|n : " answer
 if [ "$answer" != "n" ]
 then
 	echo alias run="cd $workspace/project && cargo clean && cargo build --release && cargo run" >> ~/.bashrc
 fi
-
 
 echo 
 sudo apt update

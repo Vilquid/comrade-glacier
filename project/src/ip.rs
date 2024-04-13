@@ -39,6 +39,7 @@ pub(crate) fn ip(ip: String)
 
 	let ip: std::net::IpAddr = ip.parse().unwrap();
 	let host = lookup_addr(&ip).unwrap();
+	let host = host.to_string();
 
 	dns(host.as_str());
 }

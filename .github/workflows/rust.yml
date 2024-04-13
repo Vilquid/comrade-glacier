@@ -13,8 +13,8 @@ on:
     paths:
       - '**/**.rs'
 
-rules:
-  truthy: disable
+#rules:
+#  truthy: disable
 
 env:
   CARGO_TERM_COLOR: always

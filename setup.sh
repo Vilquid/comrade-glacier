@@ -97,3 +97,4 @@ echo "diesel migration generate --diff-schema ports"
 echo "diesel migration generate --diff-schema domains"
 
 echo "NUM_THREADS=$(($(nproc) * 2))" >> .env
+echo "LAST_SCANNED_IP=0.0.0.0" >> .env

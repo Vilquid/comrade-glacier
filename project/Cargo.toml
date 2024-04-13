@@ -16,6 +16,8 @@ openssl = "0.10.52"
 x509-certificate = "0.23.1"
 x509-parser = "0.16.0"
 serde_json = "1.0.115"
+dns-lookup = "2.0.4"
+
 
 [profile.release]
 lto = "fat"

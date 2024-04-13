@@ -1,0 +1,30 @@
+---
+#name: Bash CI
+#permissions: {}
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#    paths:
+#      - '**/**.sh'
+#  pull_request:
+#    branches:
+#      - main
+#    paths:
+#      - '**/**.sh'
+#
+#jobs:
+#  shell-lint:
+#    name: Shellcheck
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: Run ShellCheck
+#        uses: ludeeus/action-shellcheck@master
+#        with:
+#          scandir: '../../.'
+#          severity: error
+#          format: tty

@@ -2,8 +2,21 @@ use std::thread;
 use std::env;
 use std::sync::mpsc::channel;
 
-fn main() {
+pub mod logger;
+pub mod schema;
+pub mod bdd;
+pub mod models;
+mod domain;
+mod get_cert;
+mod ip;
 
+
+use logger::log;
+// use crate::bdd::add_domain;
+
+fn main() {
+  
+	log("INFO", "Start of Comrade Glacier");
     //in this part I get the number of threads an create them with a channel to transmit informations between the main thread and the worker threads
     // if the number of threads is not specified, the default value is 6
     let number_of_threads = env::var("NUMBER_OF_THREADS").unwrap_or("6".to_string()).parse::<usize>().unwrap();
@@ -77,7 +90,4 @@ fn main() {
         println!("{}",i);
         
     }
-
-    
-}
 

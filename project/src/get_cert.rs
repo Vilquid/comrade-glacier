@@ -16,11 +16,6 @@ use regex::Regex;
 use chrono::{Utc, TimeZone, DateTime};
 
 
-// const PARSE_ERRORS_FATAL: bool = false;
-// #[cfg(feature = "validate")]
-// const VALIDATE_ERRORS_FATAL: bool = false;
-
-
 #[derive(Debug, PartialEq)]
 pub struct ServerCert {
 	pub subject_country: String,

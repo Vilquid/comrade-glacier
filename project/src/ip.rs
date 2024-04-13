@@ -32,7 +32,7 @@ pub(crate) fn ip(ip: String)
 	let socket = socket.parse::<SocketAddr>().unwrap();
 
 	// if the port 25 is not open
-	if !scan_port_addr(socket)
+	if TcpStream::connect_timeout(&socket, Duration::from_millis(200)).is_err()
 	{
 		return;
 	}
@@ -41,22 +41,6 @@ pub(crate) fn ip(ip: String)
 	let host = lookup_addr(&ip).unwrap();
 
 	dns(host.as_str());
-}
-
-/// # Brief
-/// Check if the port 25 is open
-/// # Arguments
-/// - adresse *SocketAddr* : adresse IP et port à tester
-/// # Return
-/// **bool**
-/// # Usage
-/// mod ip;
-/// scan_port_addr(SocketAddr::new(IpAddr::V4(Ipv4Addr::new(8, 8, 8, 8)), 25));
-/// # Warning
-/// Une tentative de connexion est faite sur le port 25 de l'adresse IP donnée en paramètre pendant 200 ms. C'est un temps suffisant pour que 99% des serveurs SMTP répondent. Un temps plus long améliorerait la fiabilité mais ralentirait le programme.
-fn scan_port_addr(addr: SocketAddr) -> bool
-{
-	TcpStream::connect_timeout(&addr, Duration::from_millis(200)).is_ok()
 }
 
 /// # Brief

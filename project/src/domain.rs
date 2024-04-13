@@ -95,6 +95,7 @@ fn bimi(domain: String) -> BIMI
 /// # Usage
 /// certificate(domain);
 #[inline]
+#[allow(clippy::let_and_return)]
 fn certificate(_domain: String) -> Certificate
 {
 	let issuer_server = IssuerDetails

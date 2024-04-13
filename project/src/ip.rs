@@ -19,6 +19,7 @@ use crate::logger::log;
 /// mod ip;
 /// ip("8.8.8.8".to_string());
 #[inline]
+#[allow(dead_code)]
 pub(crate) fn ip(ip: String)
 {
 	if !Regex::new(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,5})?$").unwrap().is_match(&ip)
@@ -53,6 +54,8 @@ pub(crate) fn ip(ip: String)
 /// # Usage
 /// mod ip;
 /// let last_ip = last_scanned_ip();
+#[inline]
+#[allow(dead_code)]
 pub(crate) fn last_scanned_ip() -> String
 {
 	dotenv().ok();
@@ -71,6 +74,7 @@ pub(crate) fn last_scanned_ip() -> String
 /// mod ip;
 /// save_last_scanned_ip("1.1.1.1".to_string());
 #[inline]
+#[allow(dead_code)]
 pub fn save_last_scanned_ip(ip: String)
 {
 	dotenv().ok();

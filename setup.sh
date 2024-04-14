@@ -96,5 +96,19 @@ echo "diesel setup"
 echo "diesel migration generate --diff-schema ports"
 echo "diesel migration generate --diff-schema domains"
 
-echo "NUM_THREADS=$(($(nproc) * 2))" >> .env
-echo "LAST_SCANNED_IP=0.0.0.0" >> .env
+num_threads=$(cat .env | grep "NUM_THREADS")
+
+if [ -z "$num_threads" ]
+then
+  echo "NUM_THREADS=$(($(nproc) * 2))" >> .env
+else
+  sed -i "s/NUM_THREADS=.*/NUM_THREADS=$(($(nproc) * 2))/" .env
+fi
+
+cat .env | grep "LAST_SCANNED_IP" > /dev/null
+
+# shellcheck disable=SC2181
+if [ $? -ne 0 ]
+then
+  echo "LAST_SCANNED_IP=0.0.0.0" >> .env
+fi

@@ -1,9 +1,13 @@
+use std::{fs, io};
+use std::fs::OpenOptions;
+use std::io::{BufRead, BufReader};
 use std::net::{SocketAddr, TcpStream};
 use std::time::Duration;
 use regex::Regex;
 use dns_lookup::lookup_addr;
 use dotenv::dotenv;
-use crate::domain::dns;
+use std::io::Write;
+use crate::bdd::add_domain;
 use crate::logger::log;
 
 
@@ -19,18 +23,17 @@ use crate::logger::log;
 /// mod ip;
 /// ip("8.8.8.8".to_string());
 #[inline]
-#[allow(dead_code)]
 pub(crate) fn ip(ip: String)
 {
+	println!("ip: {}", ip);
+	// Verify if the IP is valid
 	if !Regex::new(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,5})?$").unwrap().is_match(&ip)
 	{
 		log("ERROR", format!("The IP {} is not valid", ip).as_str());
 		return;
 	}
 
-	let port: String = "25".to_string();
-	let socket: String = format!("{}:{}", ip, port);
-	let socket = socket.parse::<SocketAddr>().unwrap();
+	let socket = format!("{}:{}", ip, "25").parse::<SocketAddr>().unwrap();
 
 	// if the port 25 is not open
 	if TcpStream::connect_timeout(&socket, Duration::from_millis(200)).is_err()
@@ -38,11 +41,13 @@ pub(crate) fn ip(ip: String)
 		return;
 	}
 
+	// if the port 25 is open
 	let ip: std::net::IpAddr = ip.parse().unwrap();
 	let host = lookup_addr(&ip).unwrap();
 	let host = host.to_string();
 
-	dns(host.as_str());
+	println!("{}:{}", ip, host);
+	add_domain(&host);
 }
 
 /// # Brief
@@ -55,8 +60,7 @@ pub(crate) fn ip(ip: String)
 /// mod ip;
 /// let last_ip = last_scanned_ip();
 #[inline]
-#[allow(dead_code)]
-pub(crate) fn last_scanned_ip() -> String
+pub fn last_scanned_ip() -> String
 {
 	dotenv().ok();
 	std::env::var("LAST_SCANNED_IP").unwrap().to_string()
@@ -74,9 +78,91 @@ pub(crate) fn last_scanned_ip() -> String
 /// mod ip;
 /// save_last_scanned_ip("1.1.1.1".to_string());
 #[inline]
-#[allow(dead_code)]
-pub fn save_last_scanned_ip(ip: String)
+// pub fn save_last_scanned_ip(ip: String)
+// {
+// 	let dotenv_path = ".env";
+// 	let temp_path = ".env.tmp";
+//
+// 	// Lire le fichier .env et écrire le nouveau contenu dans un fichier temporaire
+// 	{
+// 		let input = fs::File::open(dotenv_path).unwrap();
+// 		let buffered = BufReader::new(input);
+//
+// 		let mut output = OpenOptions::new()
+// 			.write(true)
+// 			.create(true)
+// 			.truncate(true)
+// 			.open(temp_path)
+// 			.unwrap();
+//
+// 		for line in buffered.lines() {
+// 			let line = line.unwrap();
+// 			if line.starts_with("LAST_SCANNED_IP=") {
+// 				writeln!(output, "LAST_SCANNED_IP={}", ip).unwrap();
+// 			} else {
+// 				writeln!(output, "{}", line).unwrap();
+// 			}
+// 		}
+// 	}
+//
+// 	// Renommer le fichier temporaire pour remplacer l'ancien .env
+// 	fs::rename(temp_path, dotenv_path).unwrap();
+// }
+pub fn save_last_scanned_ip(ip: String) -> io::Result<()>
 {
-	dotenv().ok();
-	std::env::set_var("LAST_SCANNED_IP", ip);
+	let dotenv_path = ".env";
+	let temp_path = ".env.tmp";
+
+	// Tenter d'ouvrir le fichier .env, gérer l'erreur s'il n'existe pas
+	let input = match fs::File::open(dotenv_path)
+	{
+		Ok(file) => file,
+		Err(e) => {
+			eprintln!("Erreur lors de l'ouverture de {}: {}", dotenv_path, e);
+			return Err(e);
+		}
+	};
+	let buffered = BufReader::new(input);
+
+	let mut output = match OpenOptions::new()
+		.write(true)
+		.create(true)
+		.truncate(true)
+		.open(temp_path)
+	{
+		Ok(file) => file,
+		Err(e) => {
+			eprintln!("Erreur lors de la création de {}: {}", temp_path, e);
+			return Err(e);
+		}
+	};
+
+	for line in buffered.lines() {
+		let line = match line {
+			Ok(ln) => ln,
+			Err(e) => {
+				eprintln!("Erreur lors de la lecture des lignes: {}", e);
+				return Err(e);
+			}
+		};
+		if line.starts_with("LAST_SCANNED_IP=") {
+			if let Err(e) = writeln!(output, "LAST_SCANNED_IP={}", ip) {
+				eprintln!("Erreur lors de l'écriture dans {}: {}", temp_path, e);
+				return Err(e);
+			}
+		} else {
+			if let Err(e) = writeln!(output, "{}", line) {
+				eprintln!("Erreur lors de l'écriture dans {}: {}", temp_path, e);
+				return Err(e);
+			}
+		}
+	}
+
+	// Renommer le fichier temporaire pour remplacer l'ancien .env
+	if let Err(e) = fs::rename(temp_path, dotenv_path) {
+		eprintln!("Erreur lors du renommage de {} à {}: {}", temp_path, dotenv_path, e);
+		return Err(e);
+	}
+
+	Ok(())
 }

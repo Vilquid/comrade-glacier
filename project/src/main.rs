@@ -1,6 +1,10 @@
-use std::thread;
 use std::env;
 use std::sync::mpsc::channel;
+use std::thread;
+use dotenv::dotenv;
+
+use logger::log;
+use crate::ip::save_last_scanned_ip;
 
 pub mod logger;
 pub mod schema;
@@ -11,22 +15,18 @@ mod get_cert;
 mod ip;
 
 
-use logger::log;
-use crate::ip::ip;
-// use crate::bdd::add_domain;
-
 fn main()
 {
 	log("INFO", "Start of Comrade Glacier");
 
 	//in this part I get the number of threads an create them with a channel to transmit informations between the main thread and the worker threads
 	// if the number of threads is not specified, the default value is 6
-	let number_of_threads = env::var("NUM_THREADS").unwrap_or("6".to_string()).parse::<usize>().unwrap();
-	
+	let number_of_threads = env::var("NUM_THREADS").unwrap_or("4".to_string()).parse::<usize>().unwrap();
+
 	// Creation of an array to make it easier to iterate over the possibilities of ip addresses
 	let mut ip: [u32; 4] = [0, 0, 0, 0];
-	
-	if env::var("LAST_SCANNED_IP").is_ok()
+
+	if dotenv().ok().is_some()
 	{
 		let last_ip = ip::last_scanned_ip();
 		let last_ip: Vec<&str> = last_ip.split('.').collect();
@@ -35,10 +35,10 @@ fn main()
 		ip[2] = last_ip[2].parse::<u32>().unwrap();
 		ip[3] = last_ip[3].parse::<u32>().unwrap();
 	}
-	
+
 	// Creation of a channel to communicate from the workers to the main thread, i need just one because channels allows multiple senders and i have only one receiver
-	let (mainspeaker, mainlistener) = channel();
-	
+	let (mainspeaker, _mainlistener) = channel();
+
 	//i create a vector to store the senders to the workers and i specify that only Strings will be passed to these senders
 	let mut annuaire: Vec<std::sync::mpsc::Sender<String>> = Vec::new();
 	let mut worker_list: Vec<thread::JoinHandle<()>> = Vec::new();
@@ -51,20 +51,21 @@ fn main()
 		let speaker2 = mainspeaker.clone();
 		worker_list.push(thread::spawn(move || {
 			let mut message = listener.recv().unwrap();
-			
+
 			#[allow(unused_variables)]
 				let mut numero = 0;
-			
+
 			while message != "extinction"
 			{
 				numero += 1;
-				let phrase = format!("adresse {}", message);
-				
-				
-				println!("ton code devra s'exécuter ici");
-				// ip();
-				
-				
+				let phrase = message.to_string();
+
+				ip::ip(message.clone());
+				// save_last_scanned_ip(message);
+				if let Err(e) = save_last_scanned_ip(message.to_string()) {
+					eprintln!("Erreur lors de la sauvegarde de l'IP: {}", e);
+				}
+
 				speaker2.send(phrase).unwrap();
 				message = listener.recv().unwrap();
 			}
@@ -73,33 +74,38 @@ fn main()
 
 	// i create a flag to stop the iteration over ip adresses when the last possibility is reached
 	let mut flag = true;
-	
+
 	//i iterate over the possibilities of ip addresses and pass them to the workers
 	while flag
 	{
-		for i in 0..number_of_threads
-		{
-			let message = format!("{}.{}.{}.{}", ip[0], ip[1], ip[2], ip[3]);
-			annuaire[i].send(message).unwrap();
-			ip[3] += 1;
-			if ip[3] == 256 {
-				flag = false;
-				ip[3] = 0;
-				ip[2] += 1;
+		#[allow(clippy::needless_range_loop)]
+			for i in 0..number_of_threads
+			{
+				let message = format!("{}.{}.{}.{}", ip[0], ip[1], ip[2], ip[3]);
+				annuaire[i].send(message).unwrap();
+
+				ip[3] += 1;
+				if ip[3] == 256
+				{
+					ip[3] = 0;
+					ip[2] += 1;
+				}
+				if ip[2] == 256
+				{
+					ip[2] = 0;
+					ip[1] += 1;
+				}
+				if ip[1] == 256
+				{
+					ip[1] = 0;
+					ip[0] += 1;
+				}
+				if ip[0] == 256
+				{
+					flag = false;
+					break;
+				}
 			}
-			if ip[2] == 256 {
-				ip[2] = 0;
-				ip[1] += 1;
-			}
-			if ip[1] == 256 {
-				ip[1] = 0;
-				ip[0] += 1;
-			}
-			if ip[0] == 256 {
-				flag = false;
-				break;
-			}
-		}
 	}
 
 	// i send the extinction signal to the workers so they will find at the end the stop message
@@ -115,13 +121,7 @@ fn main()
 	}
 	//i drop the main speaker to hang up the channel and avoid being stuck in the last loop
 	drop(mainspeaker);
-	
-	//when the workers are all deads i gather their reports and print them
-	for i in mainlistener.iter()
-	{
-		println!("{}", i);
-	}
-	
+
 	log("INFO", "End of Comrade Glacier");
 }
 

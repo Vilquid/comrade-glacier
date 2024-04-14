@@ -78,36 +78,6 @@ pub fn last_scanned_ip() -> String
 /// mod ip;
 /// save_last_scanned_ip("1.1.1.1".to_string());
 #[inline]
-// pub fn save_last_scanned_ip(ip: String)
-// {
-// 	let dotenv_path = ".env";
-// 	let temp_path = ".env.tmp";
-//
-// 	// Lire le fichier .env et écrire le nouveau contenu dans un fichier temporaire
-// 	{
-// 		let input = fs::File::open(dotenv_path).unwrap();
-// 		let buffered = BufReader::new(input);
-//
-// 		let mut output = OpenOptions::new()
-// 			.write(true)
-// 			.create(true)
-// 			.truncate(true)
-// 			.open(temp_path)
-// 			.unwrap();
-//
-// 		for line in buffered.lines() {
-// 			let line = line.unwrap();
-// 			if line.starts_with("LAST_SCANNED_IP=") {
-// 				writeln!(output, "LAST_SCANNED_IP={}", ip).unwrap();
-// 			} else {
-// 				writeln!(output, "{}", line).unwrap();
-// 			}
-// 		}
-// 	}
-//
-// 	// Renommer le fichier temporaire pour remplacer l'ancien .env
-// 	fs::rename(temp_path, dotenv_path).unwrap();
-// }
 pub fn save_last_scanned_ip(ip: String) -> io::Result<()>
 {
 	let dotenv_path = ".env";
@@ -132,37 +102,32 @@ pub fn save_last_scanned_ip(ip: String) -> io::Result<()>
 	{
 		Ok(file) => file,
 		Err(e) => {
-			eprintln!("Erreur lors de la création de {}: {}", temp_path, e);
 			return Err(e);
 		}
 	};
 
-	for line in buffered.lines() {
+	for line in buffered.lines()
+	{
 		let line = match line {
 			Ok(ln) => ln,
 			Err(e) => {
-				eprintln!("Erreur lors de la lecture des lignes: {}", e);
 				return Err(e);
 			}
 		};
-		if line.starts_with("LAST_SCANNED_IP=") {
-			if let Err(e) = writeln!(output, "LAST_SCANNED_IP={}", ip) {
-				eprintln!("Erreur lors de l'écriture dans {}: {}", temp_path, e);
+		
+		if line.starts_with("LAST_SCANNED_IP=")
+		{
+			if let Err(e) = writeln!(output, "LAST_SCANNED_IP={}", ip)
+			{
 				return Err(e);
 			}
-		} else {
-			if let Err(e) = writeln!(output, "{}", line) {
-				eprintln!("Erreur lors de l'écriture dans {}: {}", temp_path, e);
-				return Err(e);
-			}
+		} else if let Err(e) = writeln!(output, "{}", line) {
+  			return Err(e);
 		}
 	}
 
 	// Renommer le fichier temporaire pour remplacer l'ancien .env
-	if let Err(e) = fs::rename(temp_path, dotenv_path) {
-		eprintln!("Erreur lors du renommage de {} à {}: {}", temp_path, dotenv_path, e);
-		return Err(e);
-	}
+	fs::rename(temp_path, dotenv_path)?;
 
 	Ok(())
 }

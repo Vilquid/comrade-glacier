@@ -61,10 +61,8 @@ fn main()
 				let phrase = message.to_string();
 
 				ip::ip(message.clone());
-				// save_last_scanned_ip(message);
-				if let Err(e) = save_last_scanned_ip(message.to_string()) {
-					eprintln!("Erreur lors de la sauvegarde de l'IP: {}", e);
-				}
+
+				let _ = save_last_scanned_ip(message.to_string());
 
 				speaker2.send(phrase).unwrap();
 				message = listener.recv().unwrap();

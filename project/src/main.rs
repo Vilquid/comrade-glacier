@@ -59,7 +59,7 @@ fn main()
 			{
 				numero += 1;
 				let phrase = message.to_string();
-				println!("Worker {}", phrase);
+				// println!("Worker {}", phrase);
 				ip::ip(message.clone());
 
 				let _ = save_last_scanned_ip(message.to_string());

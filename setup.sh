@@ -6,13 +6,20 @@ user=$(whoami)
 #ip=$(ip route get 1.2.3.4 | awk '{print $7}')
 
 echo "Add the run alias to your bashrc ?"
+# shellcheck disable=SC2016
+echo 'alias run="cd $workspace/project && cargo clean && cargo build --release && cargo run"'
 echo "This alias will build and run the project in the project folder"
 
 # shellcheck disable=SC2162
 read -p "Y|n : " answer
 if [ "$answer" != "n" ]
 then
-	echo alias run="cd $workspace/project && cargo clean && cargo build --release && cargo run" >> ~/.bashrc
+  cat ~/.bashrc | grep "alias run" > /dev/null
+  if [ $? -eq 0 ]
+  then
+    echo alias run="cd $workspace/comrade-glacier/project && cargo clean && cargo build --release && cargo run" >> ~/.bashrc
+    echo "Alias added"
+  fi
 fi
 
 echo 
@@ -60,6 +67,8 @@ else
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
+echo "Installation de build-essential"
+sudo apt install pkg-config
 echo "Installation de build-essential"
 sudo apt install build-essential -y
 echo "Installation de Postgres"
@@ -112,4 +121,15 @@ cat .env | grep "LAST_SCANNED_IP" > /dev/null
 if [ $? -ne 0 ]
 then
   echo "LAST_SCANNED_IP=0.0.0.0" >> .env
+fi
+
+echo "End of the setup"
+
+echo "You need to reboot the server to apply the changes."
+echo "Do you want to reboot now ?"
+read -p "Y|n : " answer
+
+if [ "$answer" != "n" ]
+then
+  sudo reboot
 fi

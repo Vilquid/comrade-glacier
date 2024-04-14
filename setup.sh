@@ -61,7 +61,7 @@ else
 fi
 
 echo "Installation de build-essential"
-sudo apt install build-essential
+sudo apt install build-essential -y
 echo "Installation de Postgres"
 sudo apt install pq -y
 sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
@@ -69,23 +69,24 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-
 sudo apt -y install postgresql
 sudo apt -y install libpq-dev
 sudo systemctl start postgresql
+
+password=""
+for i in {1..7}
+do
+	part=$(tr-dc A-Za-z0-9 </dev/urandom | head -c 4)
+
+	if [ "$i" -ne 7 ]
+	then
+		password="${password}${part}"
+	fi
+done
+
 sudo -u postgres psql -c "CREATE DATABASE project OWNER $user WITH PASSWORD $password;"
 echo "DATABASE_URL=postgres://$user:$password@localhost/project" >> .env
 sudo systemctl start postgresql
 
 echo "Installation de diesel_cli"
 cargo install diesel_cli --no-default-features --features postgres
-
-password=""
-for i in {1..7}
-do
-	part=$(tr-dc A-Za-z0-9 </dev/urandom | head -c 4)
-  
-	if [ "$i" -ne 7 ]
-	then
-		password="${password}${part}"
-	fi
-done
 
 echo "À ajouter dans crontab -e"
 echo " * * * * * cd /home/ubuntu/comrade-glacier && git pull && cd"

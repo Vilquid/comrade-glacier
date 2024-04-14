@@ -21,7 +21,7 @@ fn main()
 
 	//in this part I get the number of threads an create them with a channel to transmit informations between the main thread and the worker threads
 	// if the number of threads is not specified, the default value is 6
-	let number_of_threads = env::var("NUM_THREADS").unwrap_or("4".to_string()).parse::<usize>().unwrap();
+	let number_of_threads = env::var("NUM_THREADS").unwrap_or("10".to_string()).parse::<usize>().unwrap();
 
 	// Creation of an array to make it easier to iterate over the possibilities of ip addresses
 	let mut ip: [u32; 4] = [0, 0, 0, 0];
@@ -59,7 +59,7 @@ fn main()
 			{
 				numero += 1;
 				let phrase = message.to_string();
-
+				println!("Worker {}", phrase);
 				ip::ip(message.clone());
 
 				let _ = save_last_scanned_ip(message.to_string());
@@ -83,23 +83,26 @@ fn main()
 				annuaire[i].send(message).unwrap();
 
 				ip[3] += 1;
-				if ip[3] == 256
+				if ip[3] == 254
 				{
-					ip[3] = 0;
+					ip[3] = 1;
 					ip[2] += 1;
 				}
-				if ip[2] == 256
+				if ip[2] == 255
 				{
+					println!("Current IP : {}.{}.{}.{}", ip[0], ip[1], ip[2], ip[3]);
 					ip[2] = 0;
 					ip[1] += 1;
 				}
-				if ip[1] == 256
+				if ip[1] == 255
 				{
+					// println!("Current IP : {}.{}.{}.{}", ip[0], ip[1], ip[2], ip[3]);
 					ip[1] = 0;
 					ip[0] += 1;
 				}
 				if ip[0] == 256
 				{
+					// println!("Current IP : {}.{}.{}.{}", ip[0], ip[1], ip[2], ip[3]);
 					flag = false;
 					break;
 				}

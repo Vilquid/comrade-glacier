@@ -25,7 +25,6 @@ use crate::logger::log;
 #[inline]
 pub(crate) fn ip(ip: String)
 {
-	println!("ip: {}", ip);
 	// Verify if the IP is valid
 	if !Regex::new(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,5})?$").unwrap().is_match(&ip)
 	{
@@ -45,8 +44,8 @@ pub(crate) fn ip(ip: String)
 	let ip: std::net::IpAddr = ip.parse().unwrap();
 	let host = lookup_addr(&ip).unwrap();
 	let host = host.to_string();
-
-	println!("{}:{}", ip, host);
+	
+	log("INFO", format!("The IP {} is valid -> Starting to get the DNS record of {}", ip, host).as_str());
 	add_domain(&host);
 }
 

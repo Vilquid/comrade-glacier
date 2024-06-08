@@ -46,6 +46,7 @@ pub(crate) fn ip(ip: String)
 	let host = host.to_string();
 	
 	log("INFO", format!("The IP {} is valid -> Starting to get the DNS record of {}", ip, host).as_str());
+
 	// add_domain(&host);
 }
 

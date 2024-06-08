@@ -95,6 +95,7 @@ fn bimi(domain: String) -> BIMI
 /// # Usage
 /// certificate(domain);
 #[inline]
+#[allow(clippy::let_and_return)]
 fn certificate(_domain: String) -> Certificate
 {
 	let issuer_server = IssuerDetails
@@ -642,7 +643,7 @@ fn tls_rtp(domain: String) -> TLSRTP
 /// # Return
 /// *NewDomain* - The structured domain record of the domain
 #[inline]
-pub(crate) fn dns(domain: &str) -> NewDomain
+pub fn dns(domain: &str) -> NewDomain
 {
 	let domain_struct = String::from(domain);
 	let domain_function = domain_struct.clone();

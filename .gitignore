@@ -17,3 +17,6 @@ Cargo.lock
 .idea/codeStyles/codeStyleConfig.xml
 .idea/*
 *.xml
+
+# Environment variables
+project/.env

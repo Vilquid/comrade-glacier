@@ -17,6 +17,7 @@ use std::io::Write;
 /// fn main()
 /// {
 ///     log("INFO", "Short, simple and explicit message");
+///     log("ERROR", format!("The IP {} is not valid", ip).as_str());
 /// }
 /// # Comments
 /// drop(log_file); is not used because the closing curly bracket is just after the wrinting task of the function.

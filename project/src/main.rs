@@ -115,12 +115,12 @@ fn main()
 		i.send("extinction".to_string()).unwrap();
 	}
 
-	//when all the data are sent to the workers i wait for the them to finish their job
+	// when all the data are sent to the workers i wait for the them to finish their job
 	for i in worker_list.into_iter()
 	{
 		i.join().unwrap();
 	}
-	//i drop the main speaker to hang up the channel and avoid being stuck in the last loop
+	// I drop the main speaker to hang up the channel and avoid being stuck in the last loop
 	drop(mainspeaker);
 
 	log("INFO", "End of Comrade Glacier");

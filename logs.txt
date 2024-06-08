@@ -9,3 +9,46 @@
 [INFO] - 2024/03/31 17:07:14.423 - Début du programme Comrade Glacier
 [INFO] - 2024/04/07 14:02:21.294 - Début du programme Comrade Glacier
 [INFO] - 2024/04/07 14:02:48.399 - Début du programme Comrade Glacier
+[INFO] - 2024/04/14 11:07:45.029 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:11:47.883 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:24:26.965 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:25:25.733 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:26:38.723 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:34:08.967 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:35:45.021 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:47:38.758 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:48:33.732 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:48:58.904 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:50:35.318 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:51:45.372 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:52:00.663 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:52:16.529 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:52:46.776 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:54:01.309 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:54:44.431 - Start of Comrade Glacier
+[INFO] - 2024/04/14 11:58:52.292 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:00:25.798 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:00:41.974 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:02:01.265 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:03:19.377 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:03:54.145 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:04:34.251 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:05:00.919 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:06:01.364 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:07:00.529 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:07:52.880 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:08:22.810 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:38:11.313 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:38:57.248 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:39:36.097 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:43:32.709 - Start of Comrade Glacier
+[INFO] - 2024/04/14 12:44:00.476 - Start of Comrade Glacier
+[INFO] - 2024/04/14 14:16:56.473 - Start of Comrade Glacier
+[INFO] - 2024/04/14 14:17:33.399 - Start of Comrade Glacier
+[INFO] - 2024/04/14 14:17:57.194 - Start of Comrade Glacier
+[INFO] - 2024/04/14 14:19:39.343 - Start of Comrade Glacier
+[INFO] - 2024/04/14 14:20:31.519 - Start of Comrade Glacier
+[INFO] - 2024/04/14 14:20:57.583 - Start of Comrade Glacier
+[INFO] - 2024/04/14 14:22:44.934 - Start of Comrade Glacier
+[INFO] - 2024/04/14 14:27:03.964 - Start of Comrade Glacier
+[INFO] - 2024/04/14 14:27:34.165 - Start of Comrade Glacier

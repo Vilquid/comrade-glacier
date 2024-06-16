@@ -1,6 +1,7 @@
 #!/bin/bash
 
 
+echo
 echo "### UPDATE ###"
 sudo apt update
 sudo apt full-upgrade -y
@@ -26,7 +27,7 @@ workspace=$(pwd)
 # shellcheck disable=SC2016
 echo "This alias will build and run the project in the project folder :"
 # shellcheck disable=SC2016
-echo 'alias run="cd $workspace/project && cargo clean && cargo build --release && cargo run"'
+echo 'alias run="cd ${workspace}/project && cargo run"'
 # shellcheck disable=SC2162
 read -p "Add the run alias to your bashrc ? Y|n : " answer
 if [ "$answer" != "n" ]
@@ -66,12 +67,13 @@ rustc --version &> /dev/null
 if [ $? -eq 0 ]
 then
 	echo "Installation of Rust"
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    source $HOME/.cargo/env
 fi
 echo
 
-echo "Installation of build-essential"
-sudo apt install pkg-config
+echo "Installation of pkg-config"
+sudo apt install pkg-config -y
 echo
 
 echo "Installation of build-essential"
@@ -135,6 +137,11 @@ if [ $? -ne 0 ]
 then
   echo "LAST_SCANNED_IP=0.0.0.0" >> .env
 fi
+
+echo "Build of the project"
+cargo clean
+cargo build --release
+echo
 
 echo "End of the setup"
 

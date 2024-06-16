@@ -7,15 +7,18 @@ sudo apt full-upgrade -y
 sudo apt autoremove
 sudo apt autoclean
 sudo snap refresh
+echo "### END OF UPDATE ###"
+echo ""
 
-echo "Do you want to configure the user.name for git ?"
 # shellcheck disable=SC2162
-read -p "Y|n : " answer
+read -p "Do you want to configure the user.name for git ? Y|n : " answer
 # shellcheck disable=SC2050
 if [ answer != "n" ]
 then
 	  git config user.name "Production Server"
+	  echo "User name configured as Production Server"
 fi
+echo
 
 workspace=$(pwd)
 #ip=$(ip route get 1.2.3.4 | awk '{print $7}')
@@ -28,18 +31,20 @@ echo 'alias run="cd $workspace/project && cargo clean && cargo build --release &
 read -p "Add the run alias to your bashrc ? Y|n : " answer
 if [ "$answer" != "n" ]
 then
-  # shellcheck disable=SC2002
-  cat ~/.bashrc | grep "alias run" > /dev/null
-  # shellcheck disable=SC2181
-  if [ $? -eq 0 ]
-  then
-    # shellcheck disable=SC2016
-    echo 'alias run="cd $workspace/comrade-glacier/project && cargo clean && cargo build --release && cargo run"' >> ~/.bashrc
-    echo "Alias added"
-  fi
+	# shellcheck disable=SC2002
+	cat ~/.bashrc | grep "alias run" > /dev/null
+	# shellcheck disable=SC2181
+	if [ $? -eq 0 ]
+	then
+		# shellcheck disable=SC2016
+		echo 'alias run="cd $workspace/comrade-glacier/project && cargo clean && cargo build --release && cargo run"' >> ~/.bashrc
+		echo "Alias added"
+	fi
 fi
+echo
 
-dpkg -l | grep net-tools
+dpkg -l | grep net-tools &> /dev/null
+# shellcheck disable=SC2181
 if [ $? -ne 0 ]
 then
 	echo "Installation of net-tools"
@@ -53,8 +58,8 @@ if [ $? -ne 0 ]
 then
 	echo "Installation of curl"
 	sudo apt install curl -y
-	echo
 fi
+echo
 
 rustc --version &> /dev/null
 # shellcheck disable=SC2181
@@ -62,13 +67,17 @@ if [ $? -eq 0 ]
 then
 	echo "Installation of Rust"
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-	echo
 fi
+echo
 
 echo "Installation of build-essential"
 sudo apt install pkg-config
+echo
+
 echo "Installation of build-essential"
 sudo apt install build-essential -y
+echo
+
 echo "Installation of Postgres"
 sudo apt install pq -y
 sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
@@ -92,18 +101,22 @@ sudo -u postgres psql -c "CREATE USER $USER WITH PASSWORD '$password';"
 sudo -u postgres psql -c "CREATE DATABASE project OWNER $USER;"
 echo "DATABASE_URL=postgres://$USER:$password@localhost/project" >> .env
 sudo systemctl start postgresql
+echo
 
 echo "Installation of diesel_cli"
 cargo install diesel_cli --no-default-features --features postgres
+echo
 
 echo "À ajouter dans crontab -e"
 echo " * * * * * cd $workspace/comrade-glacier && git pull && cd"
 # echo " 0 23 * * * cd /home/ubuntu/comrade-glacier && git checkout main && git add . && git commit -m "Commit quotidien automatique du serveur AWS" && git push && cd"
 echo " 0 0 * * * sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove && sudo apt autoclean"
+echo
 
 echo "diesel setup"
 echo "diesel migration generate --diff-schema ports"
 echo "diesel migration generate --diff-schema domains"
+echo
 
 num_threads=$(cat .env | grep "NUM_THREADS")
 

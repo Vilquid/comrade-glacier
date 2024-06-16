@@ -8,8 +8,13 @@ To set up your server, you need to run this script in your terminal :
 (Read setup.sh before running it. You probably need to modify it.)
 
 ```bash
-sudo apt update
-sudo apt install git-all -y # if git is not installed on you server/computer
+git -v &> /dev/null
+if [ $? -ne 0 ]
+then
+	echo "Git is not installed. Installing it ..."
+	sudo apt update
+	sudo apt install git-all -y
+fi
 git clone https://github.com/Vilquid/comrade-glacier.git
 cd comrade-glacier
 chmod +x setup.sh

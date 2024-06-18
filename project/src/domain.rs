@@ -1,6 +1,6 @@
 use std::process::Command;
 use std::str::from_utf8;
-use crate::models::{Certificate, IssuerDetails, NewDomain, SubjectDetails, ValidityDetails, BIMI, DANE, DMARC, MTASTS, SPF, TLSRTP};
+use crate::models::{NewDomain, BIMI, DANE, DMARC, MTASTS, SPF, TLSRTP};
 
 
 /// # Brief
@@ -94,118 +94,118 @@ fn bimi(domain: String) -> BIMI
 /// *Certificate* - The structured certificate record of the domain
 /// # Usage
 /// certificate(domain);
-#[inline]
-#[allow(clippy::let_and_return)]
-fn certificate(_domain: String) -> Certificate
-{
-	let issuer_server = IssuerDetails
-	{
-		city: "".to_string(),
-		state: "".to_string(),
-		locality: "".to_string(),
-		organization: "".to_string(),
-		common_name: "".to_string(),
-	};
-
-	let signature_server = "".to_string();
-
-	let validity_server = ValidityDetails {
-		not_before: "".to_string(),
-		not_after: "".to_string(),
-		is_valid: false,
-	};
-
-	let subject_server = SubjectDetails {
-		city: "".to_string(),
-		state: "".to_string(),
-		locality: "".to_string(),
-		organization: "".to_string(),
-		common_name: "".to_string(),
-	};
-
-	let extensions_server_subject_alternative_names = vec![String::new()];
-
-	let issuer_intermediate = IssuerDetails {
-		city: "".to_string(),
-		state: "".to_string(),
-		locality: "".to_string(),
-		organization: "".to_string(),
-		common_name: "".to_string(),
-	};
-
-	let signature_intermediate = "".to_string();
-
-	let validity_intermediate = ValidityDetails {
-		not_before: "".to_string(),
-		not_after: "".to_string(),
-		is_valid: false,
-	};
-
-	let subject_intermediate = SubjectDetails {
-		city: "".to_string(),
-		state: "".to_string(),
-		locality: "".to_string(),
-		organization: "".to_string(),
-		common_name: "".to_string(),
-	};
-
-	let extensions_intermediate_subject_alternative_names = vec![String::new()];
-	
-	let certificate_record = Certificate
-	{
-		used: false,
-		issuer_server: IssuerDetails
-		{
-			city: issuer_server.city.to_string(),
-			state: issuer_server.state.to_string(),
-			locality: issuer_server.locality.to_string(),
-			organization: issuer_server.organization.to_string(),
-			common_name: issuer_server.common_name.to_string(),
-		},
-
-		signature_algorithm_server: signature_server.to_string(),
-
-		validity_server: ValidityDetails {
-			not_before: validity_server.not_before.to_string(),
-			not_after: validity_server.not_after.to_string(),
-			is_valid: validity_server.is_valid.to_string().parse().unwrap(),
-		},
-		subject_server: SubjectDetails {
-			city: subject_server.city.to_string(),
-			state: subject_server.state.to_string(),
-			locality: subject_server.locality.to_string(),
-			organization: subject_server.organization.to_string(),
-			common_name: subject_server.common_name.to_string(),
-		},
-		
-		extensions_server_subject_alternative_names,
-
-		issuer_intermediate: IssuerDetails {
-			city: issuer_intermediate.city.to_string(),
-			state: issuer_intermediate.state.to_string(),
-			locality: issuer_intermediate.locality.to_string(),
-			organization: issuer_intermediate.organization.to_string(),
-			common_name: issuer_intermediate.common_name.to_string(),
-		},
-		signature_algorithm_intermediate: signature_intermediate.to_string(),
-
-		validity_intermediate: ValidityDetails {
-			not_before: validity_intermediate.not_before.to_string(),
-			not_after: validity_intermediate.not_after.to_string(),
-			is_valid: validity_intermediate.is_valid.to_string().parse().unwrap(),
-		},
-		subject_intermediate: SubjectDetails {
-			city: subject_intermediate.city.to_string(),
-			state: subject_intermediate.state.to_string(),
-			locality: subject_intermediate.locality.to_string(),
-			organization: subject_intermediate.organization.to_string(),
-			common_name: subject_intermediate.common_name.to_string(),
-		},
-		extensions_intermediate_subject_alternative_names,
-	};
-
-	certificate_record
-}
+// #[inline]
+// #[allow(clippy::let_and_return)]
+// fn certificate(_domain: String) -> Certificate
+// {
+// 	let issuer_server = IssuerDetails
+// 	{
+// 		city: "".to_string(),
+// 		state: "".to_string(),
+// 		locality: "".to_string(),
+// 		organization: "".to_string(),
+// 		common_name: "".to_string(),
+// 	};
+// 
+// 	let signature_server = "".to_string();
+// 
+// 	let validity_server = ValidityDetails {
+// 		not_before: "".to_string(),
+// 		not_after: "".to_string(),
+// 		is_valid: false,
+// 	};
+// 
+// 	let subject_server = SubjectDetails {
+// 		city: "".to_string(),
+// 		state: "".to_string(),
+// 		locality: "".to_string(),
+// 		organization: "".to_string(),
+// 		common_name: "".to_string(),
+// 	};
+// 
+// 	let extensions_server_subject_alternative_names = vec![String::new()];
+// 
+// 	let issuer_intermediate = IssuerDetails {
+// 		city: "".to_string(),
+// 		state: "".to_string(),
+// 		locality: "".to_string(),
+// 		organization: "".to_string(),
+// 		common_name: "".to_string(),
+// 	};
+// 
+// 	let signature_intermediate = "".to_string();
+// 
+// 	let validity_intermediate = ValidityDetails {
+// 		not_before: "".to_string(),
+// 		not_after: "".to_string(),
+// 		is_valid: false,
+// 	};
+// 
+// 	let subject_intermediate = SubjectDetails {
+// 		city: "".to_string(),
+// 		state: "".to_string(),
+// 		locality: "".to_string(),
+// 		organization: "".to_string(),
+// 		common_name: "".to_string(),
+// 	};
+// 
+// 	let extensions_intermediate_subject_alternative_names = vec![String::new()];
+// 	
+// 	let certificate_record = Certificate
+// 	{
+// 		used: false,
+// 		issuer_server: IssuerDetails
+// 		{
+// 			city: issuer_server.city.to_string(),
+// 			state: issuer_server.state.to_string(),
+// 			locality: issuer_server.locality.to_string(),
+// 			organization: issuer_server.organization.to_string(),
+// 			common_name: issuer_server.common_name.to_string(),
+// 		},
+// 
+// 		signature_algorithm_server: signature_server.to_string(),
+// 
+// 		validity_server: ValidityDetails {
+// 			not_before: validity_server.not_before.to_string(),
+// 			not_after: validity_server.not_after.to_string(),
+// 			is_valid: validity_server.is_valid.to_string().parse().unwrap(),
+// 		},
+// 		subject_server: SubjectDetails {
+// 			city: subject_server.city.to_string(),
+// 			state: subject_server.state.to_string(),
+// 			locality: subject_server.locality.to_string(),
+// 			organization: subject_server.organization.to_string(),
+// 			common_name: subject_server.common_name.to_string(),
+// 		},
+// 		
+// 		extensions_server_subject_alternative_names,
+// 
+// 		issuer_intermediate: IssuerDetails {
+// 			city: issuer_intermediate.city.to_string(),
+// 			state: issuer_intermediate.state.to_string(),
+// 			locality: issuer_intermediate.locality.to_string(),
+// 			organization: issuer_intermediate.organization.to_string(),
+// 			common_name: issuer_intermediate.common_name.to_string(),
+// 		},
+// 		signature_algorithm_intermediate: signature_intermediate.to_string(),
+// 
+// 		validity_intermediate: ValidityDetails {
+// 			not_before: validity_intermediate.not_before.to_string(),
+// 			not_after: validity_intermediate.not_after.to_string(),
+// 			is_valid: validity_intermediate.is_valid.to_string().parse().unwrap(),
+// 		},
+// 		subject_intermediate: SubjectDetails {
+// 			city: subject_intermediate.city.to_string(),
+// 			state: subject_intermediate.state.to_string(),
+// 			locality: subject_intermediate.locality.to_string(),
+// 			organization: subject_intermediate.organization.to_string(),
+// 			common_name: subject_intermediate.common_name.to_string(),
+// 		},
+// 		extensions_intermediate_subject_alternative_names,
+// 	};
+// 
+// 	certificate_record
+// }
 
 /// # Brief
 /// To get the structured dane record of a domain
@@ -649,7 +649,7 @@ pub fn dns(domain: &str) -> NewDomain
 	let domain_function = domain_struct.clone();
 
 	let bimi = bimi(domain_function.clone());
-	let certificate = certificate(domain_function.clone());
+	// let certificate = certificate(domain_function.clone());
 	let dane = dane(domain_function.clone());
 	let dmarc = dmarc(domain_function.clone());
 	let mta = mta(domain_function.clone());
@@ -666,39 +666,39 @@ pub fn dns(domain: &str) -> NewDomain
 		bimi_url_reputation: bimi.url_reputation,
 		bimi_hash: bimi.hash,
 		bimi_s: bimi.s,
-		certificate_used: certificate.used,
-		certificate_signature_algorithm_server: "".to_string(),
-		certificate_issuer_server_city: certificate.issuer_server.city,
-		certificate_issuer_server_state: certificate.issuer_server.state,
-		certificate_issuer_server_locality: certificate.issuer_server.locality,
-		certificate_issuer_server_organization: certificate.issuer_server.organization,
-		certificate_issuer_server_common_name: certificate.issuer_server.common_name,
-		// certificate_signature_server: certificate.signature_algorithm_server,
-		certificate_validity_server_not_before: certificate.validity_server.not_before,
-		certificate_validity_server_not_after: certificate.validity_server.not_after,
-		certificate_validity_server_is_valid: certificate.validity_server.is_valid,
-		certificate_subject_server_city: certificate.subject_server.city,
-		certificate_subject_server_state: certificate.subject_server.state,
-		certificate_subject_server_locality: certificate.subject_server.locality,
-		certificate_subject_server_organization: certificate.subject_server.organization,
-		certificate_subject_server_common_name: certificate.subject_server.common_name,
-		certificate_extensions_server_subject_alternative_names: certificate.extensions_server_subject_alternative_names,
-		certificate_signature_algorithm_intermediate: "".to_string(),
-		certificate_issuer_intermediate_city: certificate.issuer_intermediate.city,
-		certificate_issuer_intermediate_state: certificate.issuer_intermediate.state,
-		certificate_issuer_intermediate_locality: certificate.issuer_intermediate.locality,
-		certificate_issuer_intermediate_organization: certificate.issuer_intermediate.organization,
-		certificate_issuer_intermediate_common_name: certificate.issuer_intermediate.common_name,
-		// certificate_signature_intermediate: certificate.signature_algorithm_intermediate,
-		certificate_validity_intermediate_not_before: certificate.validity_intermediate.not_before,
-		certificate_validity_intermediate_not_after: certificate.validity_intermediate.not_after,
-		// certificate_validity_intermediate_is_valid: certificate.validity_intermediate.is_valid,
-		certificate_subject_intermediate_city: certificate.subject_intermediate.city,
-		certificate_subject_intermediate_state: certificate.subject_intermediate.state,
-		certificate_subject_intermediate_locality: certificate.subject_intermediate.locality,
-		certificate_subject_intermediate_organization: certificate.subject_intermediate.organization,
-		certificate_subject_intermediate_common_name: certificate.subject_intermediate.common_name,
-		certificate_extensions_intermediate_subject_alternative_names: certificate.extensions_intermediate_subject_alternative_names,
+		// certificate_used: certificate.used,
+		// certificate_signature_algorithm_server: "".to_string(),
+		// certificate_issuer_server_city: certificate.issuer_server.city,
+		// certificate_issuer_server_state: certificate.issuer_server.state,
+		// certificate_issuer_server_locality: certificate.issuer_server.locality,
+		// certificate_issuer_server_organization: certificate.issuer_server.organization,
+		// certificate_issuer_server_common_name: certificate.issuer_server.common_name,
+		// // certificate_signature_server: certificate.signature_algorithm_server,
+		// certificate_validity_server_not_before: certificate.validity_server.not_before,
+		// certificate_validity_server_not_after: certificate.validity_server.not_after,
+		// certificate_validity_server_is_valid: certificate.validity_server.is_valid,
+		// certificate_subject_server_city: certificate.subject_server.city,
+		// certificate_subject_server_state: certificate.subject_server.state,
+		// certificate_subject_server_locality: certificate.subject_server.locality,
+		// certificate_subject_server_organization: certificate.subject_server.organization,
+		// certificate_subject_server_common_name: certificate.subject_server.common_name,
+		// certificate_extensions_server_subject_alternative_names: certificate.extensions_server_subject_alternative_names,
+		// certificate_signature_algorithm_intermediate: "".to_string(),
+		// certificate_issuer_intermediate_city: certificate.issuer_intermediate.city,
+		// certificate_issuer_intermediate_state: certificate.issuer_intermediate.state,
+		// certificate_issuer_intermediate_locality: certificate.issuer_intermediate.locality,
+		// certificate_issuer_intermediate_organization: certificate.issuer_intermediate.organization,
+		// certificate_issuer_intermediate_common_name: certificate.issuer_intermediate.common_name,
+		// // certificate_signature_intermediate: certificate.signature_algorithm_intermediate,
+		// certificate_validity_intermediate_not_before: certificate.validity_intermediate.not_before,
+		// certificate_validity_intermediate_not_after: certificate.validity_intermediate.not_after,
+		// // certificate_validity_intermediate_is_valid: certificate.validity_intermediate.is_valid,
+		// certificate_subject_intermediate_city: certificate.subject_intermediate.city,
+		// certificate_subject_intermediate_state: certificate.subject_intermediate.state,
+		// certificate_subject_intermediate_locality: certificate.subject_intermediate.locality,
+		// certificate_subject_intermediate_organization: certificate.subject_intermediate.organization,
+		// certificate_subject_intermediate_common_name: certificate.subject_intermediate.common_name,
+		// certificate_extensions_intermediate_subject_alternative_names: certificate.extensions_intermediate_subject_alternative_names,
 		dane_used: dane.used,
 		dane_certificate_shape: dane.certificate_shape,
 		dane_certificate_signature: dane.certificate_signature,

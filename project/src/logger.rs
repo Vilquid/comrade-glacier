@@ -1,5 +1,7 @@
 use std::fs::OpenOptions;
 use std::io::Write;
+use rand::Rng;
+use rand::rngs::mock::StepRng;
 
 
 /// # Brief
@@ -24,6 +26,8 @@ use std::io::Write;
 #[inline]
 pub(crate) fn log(level: &str, message: &str)
 {
+	// let mut my_rng = StepRng::new(2, 1);
+	// let sample: [u32; 3] = my_rng.gen();
 	// Timestamp of the log
 	let time = chrono::Local::now().format("%Y/%m/%d %H:%M:%S.%3f");
 	

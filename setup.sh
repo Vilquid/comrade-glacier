@@ -38,7 +38,7 @@ then
 	if [ $? -eq 0 ]
 	then
 		# shellcheck disable=SC2016
-		echo 'alias run="cd $workspace/comrade-glacier/project && cargo clean && cargo build --release && cargo run"' >> ~/.bashrc
+		echo 'alias run="cd $workspace/comrade-glacier/project && cargo clean && cargo build --release && cargo run"' >> $workspace/.bashrc
 		echo "Alias added"
 	fi
 fi
@@ -139,6 +139,7 @@ then
 fi
 
 echo "Build of the project"
+cd project/
 cargo clean
 cargo build --release
 echo
